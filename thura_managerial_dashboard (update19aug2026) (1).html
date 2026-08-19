@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thura Tech — Managerial Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --surface:#fff;
+  --ink:#141C26; --ink2:#42505F; --muted:#7C8899;
+  --line:#DDE3E9; --line2:#EDF0F3;
+  --neg:#B0341F; --ok:#0E6E63;
+  --r:3px; --sc:#0E6E63;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:'IBM Plex Sans','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14.5px;line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+html[lang=th] body{line-height:1.68}
+h1,h2,h3,h4{font-family:'Archivo','Anuphan',sans-serif;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+html[lang=th] h1,html[lang=th] h2,html[lang=th] h3,html[lang=th] h4{letter-spacing:0;line-height:1.35}
+.n{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+
+.shell{display:flex;min-height:100vh}
+.rail{width:212px;flex:none;background:var(--ink);color:#C3CCD6;padding:26px 0 20px;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{padding:0 22px 20px;border-bottom:1px solid rgba(255,255,255,.09)}
+.brand .mark{font-family:'Archivo',sans-serif;font-weight:700;font-size:16px;color:#fff;
+  display:flex;align-items:baseline;gap:7px}
+.brand .mark i{font-style:normal;width:7px;height:7px;border-radius:50%;background:var(--sc);
+  transition:background .25s;flex:none;transform:translateY(-2px)}
+.brand .sub{font-size:10.5px;color:#7E8B99;letter-spacing:.11em;text-transform:uppercase;margin-top:5px}
+.lang{display:flex;margin-top:14px;border:1px solid rgba(255,255,255,.16);border-radius:var(--r);overflow:hidden;width:fit-content}
+.lang button{background:none;border:0;color:#8D9AA8;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:.06em;padding:4px 11px;cursor:pointer}
+.lang button.on{background:var(--sc);color:#fff;font-weight:600}
+.nav{padding:16px 12px;flex:1}
+.nav button{width:100%;text-align:left;background:none;border:0;color:#96A3B1;
+  font-family:inherit;font-size:13.5px;padding:9px 11px;border-radius:var(--r);cursor:pointer;
+  display:flex;gap:11px;align-items:baseline}
+.nav button:hover{color:#DCE3EA;background:rgba(255,255,255,.045)}
+.nav button.on{background:rgba(255,255,255,.1);color:#fff;font-weight:500}
+.nav button em{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#5D6B7A;width:14px;flex:none}
+.nav button.on em{color:var(--sc)}
+.railfoot{padding:0 22px;font-size:10.5px;color:#5D6B7A;line-height:1.65}
+
+.main{flex:1;min-width:0}
+.page{display:none;padding:34px 40px 90px;max-width:1160px}
+.page.on{display:block}
+.phead{margin-bottom:24px}
+.eyebrow{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:7px}
+.phead h1{font-size:27px}
+.phead p{color:var(--ink2);margin-top:8px;max-width:66ch;font-size:14px}
+
+.tabs{display:flex;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;font-family:inherit;
+  font-size:13.5px;color:var(--muted);padding:9px 15px 10px;cursor:pointer;margin-bottom:-1px;
+  white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tabs button:hover{color:var(--ink2)}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--sc);font-weight:600}
+.tabs button i{font-style:normal;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.35}
+.tabs button.on i{opacity:1;background:var(--sc)}
+.slogic{background:var(--surface);border:1px solid var(--line);border-top:0;border-left:3px solid var(--sc);
+  padding:12px 17px;margin-bottom:22px;font-size:13px;color:var(--ink2)}
+.slogic b{color:var(--ink);font-weight:600}
+.slogic .fx{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--sc);font-weight:500}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 24px;margin-bottom:20px}
+.card>h3{font-size:15px}
+.cap{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cap b{color:var(--ink2);font-weight:600}
+.card>h3+.cap{max-width:78ch}
+.card>h3+.cap{margin:2px 0 15px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.kpi{background:var(--surface);padding:14px 16px}
+.kpi .k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;min-height:26px}
+.kpi .v{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:500;letter-spacing:-.02em;line-height:1.15}
+.kpi .u{font-size:11.5px;color:var(--muted);margin-top:3px}
+.kpi .v.neg{color:var(--neg)} .kpi .v.pos{color:var(--ok)}
+
+.tw{overflow-x:auto;margin:0 -24px;padding:0 24px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th,td{padding:6.5px 10px;text-align:right;border-bottom:1px solid var(--line2);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0;min-width:190px;white-space:normal}
+th{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;
+  border-bottom:1px solid var(--line);padding-bottom:8px}
+tr.head td{font-weight:600;font-size:13.5px;padding-top:13px;border-bottom:1px solid var(--line)}
+tr.sub td{color:var(--ink2);font-size:12.5px}
+tr.sub td:first-child{padding-left:16px;color:var(--muted)}
+tr.total td{font-weight:600;border-top:1px solid var(--ink);border-bottom:2px solid var(--ink);padding:9px 10px}
+tr.pct td{font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}
+tr.pct td:first-child{padding-left:16px}
+td.neg{color:var(--neg)}
+tr.zebra td{background:#FAFBFC}
+td.free{text-align:left;white-space:normal;min-width:0}
+table.mth{min-width:900px;font-size:12px}
+table.mth th,table.mth td{padding:5.5px 7px}
+table.mth th:first-child,table.mth td:first-child{min-width:160px;font-size:12.5px}
+table.mth .tot{border-left:1px solid var(--line);font-weight:600;background:#F7F9FA}
+table.mth th.tot{color:var(--ink2)}
+#mthWrap{margin-top:14px}
+#mthWrap .body{padding-bottom:4px}
+
+details{border-top:1px solid var(--line2);margin-top:4px}
+details summary{cursor:pointer;list-style:none;padding:11px 0;font-size:12.5px;color:var(--sc);
+  font-weight:500;display:flex;align-items:center;gap:8px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"+";font-family:'IBM Plex Mono',monospace;font-size:14px;
+  width:15px;height:15px;border:1px solid currentColor;border-radius:2px;display:grid;place-items:center;line-height:1;flex:none}
+details[open] summary::before{content:"−"}
+details .body{padding:2px 0 16px;font-size:13px;color:var(--ink2)}
+details .body p{margin:8px 0}
+details .body ul{list-style:none;margin:8px 0}
+details .body li{padding:3px 0 3px 16px;position:relative}
+details .body li::before{content:"";position:absolute;left:2px;top:13px;width:5px;height:1px;background:var(--muted)}
+
+.doc{max-width:76ch}
+.doc h2{font-size:17px;margin:30px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
+.doc h2:first-of-type{border-top:0;padding-top:0;margin-top:2px}
+.doc h2 em{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--sc);margin-right:11px;font-weight:600}
+.doc p{margin:8px 0;color:var(--ink2)}
+.doc strong{color:var(--ink);font-weight:600}
+.doc .tw{margin:14px -24px;padding:0 24px}
+.doc table{min-width:400px}
+.pull{border-left:3px solid var(--sc);background:#F7F9FA;padding:13px 17px;margin:16px 0;font-size:13.5px;color:var(--ink2)}
+.pull strong{color:var(--ink)}
+
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.gl{stroke:var(--line2);stroke-width:1}
+.zl{stroke:var(--ink);stroke-width:1.25}
+.axt{font-family:'IBM Plex Mono',monospace;font-size:9.5px;fill:var(--muted)}
+.cline{fill:none;stroke:var(--sc);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.cfillpos{fill:var(--sc);opacity:.10}
+.cfillneg{fill:var(--neg);opacity:.14}
+.dotneg{fill:var(--neg);stroke:#fff;stroke-width:1.5}
+.mkline{stroke:var(--neg);stroke-width:1;stroke-dasharray:3 3}
+.mklab{font-family:'Archivo','Anuphan',sans-serif;font-size:10.5px;fill:var(--neg);font-weight:600}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;align-items:center}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:14px;height:3px;border-radius:2px;flex:none}
+
+.sim{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--sc);
+  border-radius:var(--r);padding:20px 24px;margin-bottom:20px}
+.simtop{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.simtop h3{font-size:15px}
+.simval{text-align:right}
+.simval .amt{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:600;letter-spacing:-.025em;line-height:1}
+.simval .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:4px 0}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--line);border-radius:3px}
+input[type=range]::-moz-range-track{height:5px;background:var(--line);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;
+  background:var(--sc);border:3px solid #fff;box-shadow:0 0 0 1px var(--sc);margin-top:-7px}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--sc);
+  border:3px solid #fff;box-shadow:0 0 0 1px var(--sc)}
+input[type=range]:focus-visible{outline:2px solid var(--sc);outline-offset:4px}
+.scale{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted)}
+.verdict{margin-top:16px;padding:12px 16px;border-radius:var(--r);font-size:13.5px;display:flex;gap:12px;align-items:flex-start;line-height:1.55}
+.verdict.ok{background:#EAF4F2;color:#0A4F47}
+.verdict.bad{background:#FBEDEA;color:#8A2917}
+.verdict b{font-weight:600}
+.verdict .ic{font-family:'IBM Plex Mono',monospace;font-weight:700;flex:none;margin-top:1px}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.presets button{font-family:inherit;font-size:12.5px;padding:6px 13px;border:1px solid var(--line);
+  background:var(--surface);border-radius:var(--r);cursor:pointer;color:var(--ink2)}
+.presets button:hover{border-color:var(--sc);color:var(--sc)}
+
+.months{display:grid;grid-template-columns:1fr 1fr;gap:0 34px}
+@media(max-width:860px){.months{grid-template-columns:1fr}}
+.mcol h4{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500;
+  padding-bottom:7px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.mrow{display:grid;grid-template-columns:36px 1fr 74px 88px;align-items:center;gap:10px;
+  padding:5px 0;border-bottom:1px solid var(--line2);font-size:12.5px}
+.mrow .m{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:11px}
+.mrow .bar{height:7px;background:var(--line2);border-radius:2px;position:relative}
+.mrow .bar b{position:absolute;top:0;height:7px;border-radius:2px;display:block}
+.mrow .net{font-family:'IBM Plex Mono',monospace;text-align:right;color:var(--muted);font-size:11.5px}
+.mrow .bal{font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:500}
+.mrow.short{background:#FDF4F2}
+.mrow.short .bal{color:var(--neg)}
+.mhead{display:grid;grid-template-columns:36px 1fr 74px 88px;gap:10px;font-size:10px;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-bottom:6px}
+.mhead span:nth-child(3),.mhead span:nth-child(4){text-align:right}
+
+.tl{border:1px dashed var(--line);border-radius:var(--r);background:var(--surface);min-height:380px;padding:28px;position:relative}
+.tlgrid{position:absolute;inset:0;background-image:linear-gradient(to right,var(--line2) 1px,transparent 1px);
+  background-size:calc(100%/12) 100%;opacity:.75;pointer-events:none}
+.tlq{display:grid;grid-template-columns:repeat(12,1fr);position:relative;z-index:1;
+  border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:6px}
+.tlq div{font-size:10.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.lane{border-top:1px solid var(--line2);padding:15px 0 18px;position:relative;z-index:1}
+.lane .lname{font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.lane .lname i{font-style:normal;width:8px;height:8px;border-radius:2px;flex:none}
+.lane .lcap{font-size:11.5px;color:var(--muted)}
+.tlempty{position:relative;z-index:1;text-align:center;padding:44px 20px 10px;color:var(--muted)}
+.tlempty h4{font-size:13.5px;color:var(--ink2);margin-bottom:6px}
+.tlempty p{font-size:12.5px;max-width:50ch;margin:0 auto;line-height:1.6}
+
+.foot{font-size:11.5px;color:var(--muted);margin-top:22px;padding-top:13px;border-top:1px solid var(--line);line-height:1.65}
+
+@media(max-width:820px){
+  .shell{flex-direction:column}
+  .rail{width:100%;height:auto;position:static;padding:18px 0 10px}
+  .brand{padding:0 20px 14px;display:flex;justify-content:space-between;align-items:flex-start}
+  .brand .lang{margin-top:0}
+  .nav{display:flex;gap:4px;overflow-x:auto;padding:12px 14px}
+  .nav button{white-space:nowrap;width:auto}
+  .railfoot{display:none}
+  .page{padding:24px 18px 70px}
+  .tw,.doc .tw,.gwrap{margin:0 -18px;padding:0 18px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== 04 execution timeline (gantt) ===== */
+.gwrap{overflow-x:auto;margin:0 -24px;padding:0 24px}
+.gant{min-width:940px}
+.ghead{display:grid;grid-template-columns:258px 1fr;align-items:end;
+  border-bottom:1px solid var(--line);padding-bottom:7px}
+.ghead .gh1{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.gmonths{display:flex}
+.gmonths div{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;border-left:1px solid var(--line);padding-left:8px}
+.gbody{position:relative}
+.gsep{position:absolute;top:0;bottom:0;left:258px;right:0;pointer-events:none;z-index:0}
+.gsep i{position:absolute;top:0;bottom:0;border-left:1px solid var(--line2)}
+.gsep b{position:absolute;top:0;bottom:0;border-left:1px dashed var(--neg);opacity:.6}
+.gsep u{position:absolute;top:2px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+  color:var(--neg);text-decoration:none;margin-left:5px}
+.ggroup{position:relative;z-index:1;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding:17px 0 5px;border-bottom:1px solid var(--line)}
+.grow{position:relative;z-index:1;display:grid;grid-template-columns:258px 1fr;align-items:center;
+  border-bottom:1px solid var(--line2);font-size:12.5px}
+.gname{padding:5px 14px 5px 0;color:var(--ink2);display:flex;gap:9px;align-items:baseline}
+.gname em{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex:none;width:26px}
+.gtrack{position:relative;height:26px}
+.gbar{position:absolute;top:8px;height:10px;border-radius:2px;min-width:5px;z-index:2}
+.gblab{position:absolute;top:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  color:var(--muted);white-space:nowrap;text-decoration:none;z-index:2}
+.gmile{position:absolute;top:7px;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);z-index:3;border-radius:2px}
+.gmlab{position:absolute;top:5px;font-size:10.5px;font-weight:600;white-space:nowrap;
+  font-family:'Archivo','Anuphan',sans-serif;text-decoration:none;z-index:3}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 2px}
+.chip{font-size:12px;border:1px solid #BFD9D5;background:#F2F8F7;color:#0A4F47;
+  border-radius:var(--r);padding:4px 11px;display:flex;gap:7px;align-items:center}
+.chip i{font-style:normal;font-size:11px;font-weight:700}
+.stat{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.stat i{width:7px;height:7px;border-radius:50%;flex:none}
+td .stat{font-size:12px}
+.crit{font-family:'Archivo','Anuphan',sans-serif;font-size:10.5px;font-weight:600;
+  letter-spacing:.04em;color:var(--neg)}
+
+/* ===== 06 brand ===== */
+.swatches{display:flex;gap:15px;flex-wrap:wrap;margin:15px 0 4px}
+.sw{font-size:10.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+.sw b{display:block;width:78px;height:52px;border-radius:var(--r);border:1px solid var(--line);margin-bottom:7px}
+.sw em{font-style:normal;display:block;color:var(--ink2);font-family:'IBM Plex Sans','IBM Plex Sans Thai',sans-serif;font-size:12px;margin-bottom:1px}
+.quotes{display:grid;gap:9px;margin:14px 0 4px}
+.q{border-left:3px solid var(--sc);background:#F7F9FA;padding:11px 16px;font-size:13.5px;color:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px 34px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.pill{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:99px;
+  padding:3px 11px;color:var(--ink2);margin:0 6px 7px 0}
+.doc ul.tick{list-style:none;margin:10px 0}
+.doc ul.tick li{padding:3px 0 3px 17px;position:relative;color:var(--ink2)}
+.doc ul.tick li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:1px;background:var(--sc)}
+
+/* ===== 07 marketing plan ===== */
+.awaiting{background:#FDF7EE;border:1px solid #E8D7B8;border-left:3px solid #B5720E;
+  border-radius:var(--r);padding:13px 17px;margin-bottom:20px;font-size:13px;color:#6E4A0C;line-height:1.6}
+.awaiting b{font-weight:600}
+.tmpl{border:1px dashed var(--line);border-radius:var(--r);background:#FBFCFD;padding:14px 17px;margin-top:14px}
+.tmpl h4{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:7px}
+.tmpl p{font-size:12.5px;color:var(--ink2)}
+#doc6{max-width:none}
+#doc6 p,#doc6 ul,#doc6 .quotes{max-width:78ch}
+td.ph,th.ph{color:#AFB9C4}
+tr.ph td{color:#AFB9C4}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">
+      <div>
+        <div class="mark"><i></i>Thura Tech</div>
+        <div class="sub" data-t="sub"></div>
+      </div>
+      <div class="lang" id="lang">
+        <button data-l="en" class="on">EN</button><button data-l="th">ไทย</button>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="on" data-p="p1"><em>01</em><span data-t="nav1"></span></button>
+      <button data-p="p2"><em>02</em><span data-t="nav2"></span></button>
+      <button data-p="p3"><em>03</em><span data-t="nav3"></span></button>
+      <button data-p="p4"><em>04</em><span data-t="nav4"></span></button>
+      <button data-p="p5"><em>05</em><span data-t="nav5"></span></button>
+      <button data-p="p6"><em>06</em><span data-t="nav6"></span></button>
+      <button data-p="p7"><em>07</em><span data-t="nav7"></span></button>
+    </nav>
+    <div class="railfoot" data-t="railfoot"></div>
+  </aside>
+
+  <main class="main">
+
+  <section class="page on" id="p1">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb1"></div>
+      <h1 data-t="h1_1"></h1>
+      <p data-t="sub1"></p>
+    </div>
+    <div class="card doc" id="doc1"></div>
+  </section>
+
+  <section class="page" id="p2">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb2"></div>
+      <h1 data-t="h1_2"></h1>
+      <p data-t="sub2"></p>
+    </div>
+    <div class="tabs" id="tabs2"></div>
+    <div class="slogic" id="logic2"></div>
+    <div class="kpis" id="kpi2"></div>
+    <div class="card">
+      <h3 data-t="plTitle"></h3>
+      <div class="cap" data-t="plCap"></div>
+      <div class="tw" id="pl2"></div>
+      <details id="mthWrap">
+        <summary data-t="mthOpen"></summary>
+        <div class="body">
+          <div class="cap" data-t="mthCap" style="margin-bottom:12px"></div>
+          <div class="tw" id="pl2m"></div>
+        </div>
+      </details>
+    </div>
+    <div class="card">
+      <h3 data-t="cmpTitle"></h3>
+      <div class="cap" data-t="mn"></div>
+      <div class="tw" id="cmp2"></div>
+    </div>
+  </section>
+
+  <section class="page" id="p3">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb3"></div>
+      <h1 data-t="h1_3"></h1>
+      <p data-t="sub3"></p>
+    </div>
+    <div class="tabs" id="tabs3"></div>
+    <div class="slogic" id="logic3"></div>
+
+    <div class="sim">
+      <div class="simtop">
+        <div>
+          <h3 data-t="simTitle"></h3>
+          <div class="cap" data-t="simCap"></div>
+        </div>
+        <div class="simval">
+          <div class="amt n" id="simamt">฿5.0M</div>
+          <div class="lbl" data-t="simLbl"></div>
+        </div>
+      </div>
+      <input type="range" id="slider" min="5000000" max="20000000" step="250000" value="5000000">
+      <div class="scale"><span>฿5M</span><span>฿10M</span><span>฿15M</span><span>฿20M</span></div>
+      <div class="verdict" id="verdict"></div>
+      <div class="presets" id="presets"></div>
+    </div>
+
+    <div class="kpis" id="kpi3"></div>
+
+    <div class="card">
+      <h3 data-t="mTitle"></h3>
+      <div class="cap" data-t="mCap"></div>
+      <div class="months" id="months3"></div>
+    </div>
+
+    <div class="card">
+      <h3 data-t="cTitle"></h3>
+      <div class="cap" data-t="cCap"></div>
+      <div id="chart3"></div>
+      <div class="legend" id="legend3"></div>
+    </div>
+
+    <div class="card">
+      <h3 data-t="cmp3Title"></h3>
+      <div class="cap" data-t="cmp3Cap"></div>
+      <div class="tw" id="cmp3"></div>
+    </div>
+    <div class="foot" data-t="cfFoot"></div>
+  </section>
+
+  <section class="page" id="p4">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb4"></div>
+      <h1 data-t="h1_4"></h1>
+      <p data-t="sub4"></p>
+    </div>
+    <div class="tabs" id="tabs4"></div>
+    <div class="slogic" id="logic4"></div>
+    <div class="kpis" id="kpi4"></div>
+    <div class="card">
+      <h3 data-t="glTitle"></h3>
+      <div class="cap" data-t="glCap"></div>
+      <div id="gantt4"></div>
+      <div class="legend" id="legend4"></div>
+      <details>
+        <summary data-t="tlTableOpen"></summary>
+        <div class="body"><div class="tw" id="tltable"></div></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="page" id="p5">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb5"></div>
+      <h1 data-t="h1_5"></h1>
+      <p data-t="sub5"></p>
+    </div>
+    <div class="tabs" id="tabs5"></div>
+    <div class="slogic" id="logic5"></div>
+    <div class="kpis" id="kpi5"></div>
+    <div class="card">
+      <h3 data-t="pTitle"></h3>
+      <div class="cap" data-t="pCap"></div>
+      <div class="tw" id="ptable"></div>
+      <div class="legend" id="legend5"></div>
+    </div>
+    <div class="foot" data-t="pFoot"></div>
+  </section>
+
+  <section class="page" id="p6">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb6"></div>
+      <h1 data-t="h1_6"></h1>
+      <p data-t="sub6"></p>
+    </div>
+    <div class="tabs" id="tabs6"></div>
+    <div class="slogic" id="logic6"></div>
+    <div class="card doc" id="doc6"></div>
+  </section>
+
+  <section class="page" id="p7">
+    <div class="phead">
+      <div class="eyebrow" data-t="eb7"></div>
+      <h1 data-t="h1_7"></h1>
+      <p data-t="sub7"></p>
+    </div>
+    <div class="tabs" id="tabs7"></div>
+    <div class="awaiting" id="await7"></div>
+    <div id="mkt7"></div>
+  </section>
+
+  </main>
+</div>
+
+<script>
+const D = {"best":{"rev":[53694715,239933564,501468336,741279129,937381768,1104987505,1254499805],"cogs":[33764840,150850056,315207573,465871313,589081149,694317020,788102546],"gp":[19929875,89083508,186260763,275407816,348300619,410670485,466397258],"sell":[3244800,7324007,15176350,22377289,28267314,33302779,37795806],"foh":[1684800,4798671,10029367,14825583,18747635,22099750,25089996],"util":[1560000,2525336,5146983,7551706,9519678,11203029,12705810],"opex":[16047162,41583793,77326704,104917168,122259431,143464483,162420573],"infra":[1176000,4798671,10029367,14825583,18747635,22099750,25089996],"rent":[706000,189000,198450,208372,218791,229731,241217],"mkt":[9443366,28792028,55161517,74127913,84364359,99448875,112904982],"misc":[44849,47091,49446,51918,54514,57239,60101],"bo":[3960000,4158000,4365900,4584195,4813405,5054075,5306779],"opvar":[716947,3599003,7522025,11119187,14060727,16574813,18817497],"ebitda":[637914,40175707,93757708,148113360,197773875,233903223,266180880],"cust":[4286,12478,21678,29298,35597,41064,46001],"pen":[1.0,2.9,5.0,6.8,8.3,9.5,10.7],"cf":[3306820,2249018,1317113,729900,305166,62080,81476,337827,1151912,2241855,3622752,5312914,8633806,11954698,15275591,18596483,21917375,25238267,28559160,31880052,35200944,38521837,41842729,45163621],"capfile":5000000,"opexmo":1337263,"firstneg":null,"trough":62080,"troughm":6,"upfront":5000000,"upfrontbuf":9011790,"inj0":[],"inj0tot":0,"injb":[[1,1000000],[2,1000000],[3,1000000],[4,500000],[5,500000]],"injbtot":4000000,"m":{"rev":[379293,831452,1352743,1954373,2632605,3391178,4473002,5455792,6524529,7668004,8875004,10156742],"cogs":[237944,521944,849571,1228297,1655880,2134189,2812895,3430966,4103034,4822000,5581136,6386983],"gp":[141348,309508,503172,726076,976725,1256988,1660106,2024825,2421495,2846004,3293868,3769759],"sell":[270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400],"foh":[140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400],"util":[130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000],"opex":[1537045,1069826,1137594,1015806,1103976,1202590,1343228,1470990,1309926,1458578,1615488,1782114],"infra":[98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000],"rent":[541000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],"mkt":[545515,599774,662329,534525,615913,706941,836760,954695,782943,920160,1065000,1218809],"misc":[3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737],"bo":[330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000],"opvar":[18793,23315,28527,34544,41326,48912,59730,69558,80245,91680,103750,116567],"ebitda":[-1666097,-1030718,-904822,-560130,-397651,-216002,46479,283435,841168,1117026,1407980,1717245],"cust":[157,346,565,821,1113,1440,1888,2303,2754,3236,3746,4286]}},"base":{"rev":[29583940,132626322,278191718,413273546,527461305,627210167,718300802],"cogs":[18603680,83376416,174839384,259680136,331283021,393752336,450769087],"gp":[10980260,49249907,103352334,153593410,196178284,233457831,267531715],"sell":[3244800,4104790,8478052,12537121,15969700,18969459,21709836],"foh":[1684800,2652526,5563834,8265471,10549226,12544203,14366016],"util":[1560000,1452263,2914217,4271650,5420474,6425255,7343819],"opex":[12912761,24951171,44951595,60636414,71019373,83742316,95395698],"infra":[1176000,2652526,5563834,8265471,10549226,12544203,14366016],"rent":[706000,189000,198450,208372,218791,229731,241217],"mkt":[6550073,15915159,30601089,41327355,47471517,56448915,64647072],"misc":[44849,47091,49446,51918,54514,57239,60101],"bo":[3960000,4158000,4365900,4584195,4813405,5054075,5306779],"opvar":[475839,1989395,4172876,6199103,7911920,9408153,10774512],"ebitda":[-5177301,20193946,49922687,80419875,109189211,130746056,150426182],"cust":[2362,6905,12025,16357,19984,23216,26191],"pen":[0.5,1.6,2.8,3.8,4.6,5.4,6.1],"cf":[3254568,2095911,1006724,197019,-523187,-1143695,-1620031,-1966175,-1869906,-1621246,-1212236,-632301,1012611,2657523,4302436,5947348,7592260,9237172,10882084,12526997,14171909,15816821,17461733,19106645],"capfile":7000000,"opexmo":1076063,"firstneg":5,"trough":-1966175,"troughm":8,"upfront":6966175,"upfrontbuf":10194365,"inj0":[[5,1000000],[6,500000],[7,500000]],"inj0tot":2000000,"injb":[[2,1500000],[3,1000000],[4,1000000],[5,500000],[6,500000],[7,500000],[8,500000]],"injbtot":5500000,"m":{"rev":[208611,459635,747372,1078081,1451763,1868417,2462579,3002553,3592975,4224502,4889660,5597793],"cogs":[130869,288485,469347,677581,913186,1175976,1548727,1888311,2259565,2656603,3074940,3520090],"gp":[77742,171150,278025,400500,538577,692441,913852,1114242,1333410,1567899,1814720,2077702],"sell":[270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400],"foh":[140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400],"util":[130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000],"opex":[1514857,1021490,1058896,901888,950467,1004632,1081873,1152069,928824,1010923,1097393,1189450],"infra":[98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000],"rent":[541000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],"mkt":[525033,555156,589685,429370,474212,524210,595510,660306,431157,506940,586759,671735],"misc":[3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737],"bo":[330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000],"opvar":[17086,19596,22474,25781,29518,33684,39626,45026,50930,57245,63897,70978],"ebitda":[-1707515,-1120740,-1051271,-771788,-682290,-582591,-438420,-308227,134186,286576,446926,617852],"cust":[86,191,312,453,614,794,1040,1268,1517,1783,2064,2362]}},"worst":{"rev":[5482521,25171483,55963497,87762890,118254647,147679744,176224939],"cogs":[3445612,15808518,35087997,54941171,73920089,92186430,109874482],"gp":[2036909,9362965,20875500,32821719,44334558,55493314,66350458],"sell":[3244800,881144,1811205,2771802,3693500,4583546,5447560],"foh":[1684800,503430,1119270,1755258,2365093,2953595,3524499],"util":[1560000,377715,691935,1016544,1328407,1629951,1923061],"opex":[9779576,8295671,12728503,16692475,19868540,23801013,27636215],"infra":[1176000,503430,1119270,1755258,2365093,2953595,3524499],"rent":[706000,189000,198450,208372,218791,229731,241217],"mkt":[3657903,3020578,6155985,8776289,10642918,13291177,15860245],"misc":[44849,47091,49446,51918,54514,57239,60101],"bo":[3960000,4158000,4365900,4584195,4813405,5054075,5306779],"opvar":[234825,377572,839452,1316443,1773820,2215196,2643374],"ebitda":[-10987467,186150,6335792,13357442,20772517,27108755,33266683],"cust":[436,1327,2414,3438,4395,5301,6176],"pen":[0.1,0.3,0.6,0.8,1.0,1.2,1.4],"cf":[3186067,1909295,645155,-404113,-1436265,-2450070,-3436595,-4398270,-5034272,-5642360,-6220702,-6767467,-6816955,-6866443,-6915930,-6965418,-7014905,-7064393,-7113880,-7163368,-7212855,-7262343,-7311830,-7361318],"capfile":12000000,"opexmo":814965,"firstneg":4,"trough":-7361318,"troughm":24,"upfront":12361318,"upfrontbuf":14806212,"inj0":[[4,500000],[5,1000000],[6,1000000],[7,1000000],[8,1000000],[9,1000000],[10,500000],[11,500000],[12,500000],[17,500000]],"inj0tot":7500000,"injb":[[2,1000000],[3,1000000],[4,1000000],[5,1000000],[6,1000000],[7,1000000],[8,1000000],[9,500000],[10,1000000],[11,500000],[12,500000],[18,500000]],"injbtot":10000000,"m":{"rev":[37929,84079,136395,198053,269053,345658,457764,560528,667028,782870,906186,1036976],"cogs":[23794,52783,85667,124437,169092,217390,287643,352197,419179,492047,569586,651797],"gp":[14135,31296,50728,73617,99962,128268,170122,208331,247849,290823,336599,385179],"sell":[270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400,270400],"foh":[140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400,140400],"util":[130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000,130000],"opex":[1492668,972668,979469,787484,796714,806673,821247,834606,548451,563510,579542,596544],"infra":[98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000],"rent":[541000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],"mkt":[504552,510090,516367,323766,332286,341479,354932,367263,80043,93944,108742,124437],"misc":[3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737],"bo":[330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000,330000],"opvar":[15379,15841,16364,16981,17691,18457,19578,20605,21670,22829,24062,25370],"ebitda":[-1748933,-1211771,-1199141,-984268,-967153,-948805,-921525,-896675,-571002,-543088,-513342,-481765],"cust":[16,35,57,83,113,146,192,235,280,329,381,436]}},"worstadj":{"rev":[5482521,25171483,55963497,87762890,118254647,147679744,176224939],"cogs":[3445612,15808518,35087997,54941171,73920089,92186430,109874482],"gp":[2036909,9362965,20875500,32821719,44334558,55493314,66350458],"sell":[1682400,881144,1811205,2771802,3693500,4583546,5447560],"foh":[842400,503430,1119270,1755258,2365093,2953595,3524499],"util":[840000,377715,691935,1016544,1328407,1629951,1923061],"opex":[7924751,6153956,10184368,13731122,16498083,20026909,23461793],"infra":[1176000,503430,1119270,1755258,2365093,2953595,3524499],"rent":[706000,189000,198450,208372,218791,229731,241217],"mkt":[3657903,3020578,6155985,8776289,10642918,13291177,15860245],"misc":[44849,47091,49446,51918,54514,57239,60101],"bo":[2160000,2268000,2381400,2500470,2625494,2756768,2894607],"opvar":[180000,125857,279817,438814,591273,738399,881125],"ebitda":[-7570242,2327864,8879927,16318795,24142975,30882859,37441105],"cust":[436,1327,2414,3438,4395,5301,6176],"pen":[0.1,0.3,0.6,0.8,1.0,1.2,1.4],"cf":[3488313,2514249,1553339,807918,80323,-628159,-1308239,-1962442,-2289907,-2588300,-2855713,-3090242,-2939587,-2788932,-2638276,-2487621,-2336965,-2186310,-2035655,-1884999,-1734344,-1583689,-1433033,-1282378],"capfile":8000000,"opexmo":660396,"firstneg":6,"trough":-3090242,"troughm":12,"upfront":8090242,"upfrontbuf":10071430,"inj0":[[6,1000000],[7,500000],[8,500000],[9,500000],[10,500000],[12,500000]],"inj0tot":3500000,"injb":[[3,500000],[4,1000000],[5,500000],[6,1000000],[7,500000],[8,500000],[9,500000],[10,500000],[12,500000]],"injbtot":5500000,"m":{"rev":[37929,84079,136395,198053,269053,345658,457764,560528,667028,782870,906186,1036976],"cogs":[23794,52783,85667,124437,169092,217390,287643,352197,419179,492047,569586,651797],"gp":[14135,31296,50728,73617,99962,128268,170122,208331,247849,290823,336599,385179],"sell":[140200,140200,140200,140200,140200,140200,140200,140200,140200,140200,140200,140200],"foh":[70200,70200,70200,70200,70200,70200,70200,70200,70200,70200,70200,70200],"util":[70000,70000,70000,70000,70000,70000,70000,70000,70000,70000,70000,70000],"opex":[1342289,821827,828105,635504,644024,653216,666669,679001,391781,405682,420480,436174],"infra":[98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000,98000],"rent":[541000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],"mkt":[504552,510090,516367,323766,332286,341479,354932,367263,80043,93944,108742,124437],"misc":[3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737,3737],"bo":[180000,180000,180000,180000,180000,180000,180000,180000,180000,180000,180000,180000],"opvar":[15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],"ebitda":[-1468354,-930730,-917577,-702087,-684262,-665148,-636747,-610869,-284132,-255059,-224080,-191196],"cust":[16,35,57,83,113,146,192,235,280,329,381,436]}}};
+const CAP0 = 5000000;
+let LANG = 'en', curPL='best', curCF='best', curTL='all';
+
+/* ================= i18n ================= */
+const T = {
+ sub:{en:'Managerial Dashboard',th:'Managerial Dashboard'},
+ nav1:{en:'Assumptions',th:'สมมติฐาน'},
+ nav2:{en:'P&L to EBITDA',th:'งบกำไรขาดทุน'},
+ nav3:{en:'Cash Runway',th:'กระแสเงินสด'},
+ nav4:{en:'Execution Timeline',th:'Timeline ดำเนินงาน'},
+ nav5:{en:'Partners',th:'พาร์ทเนอร์'},
+ nav6:{en:'Brand Strategy',th:'กลยุทธ์แบรนด์'},
+ nav7:{en:'Marketing Plan',th:'แผนการตลาด'},
+ railfoot:{en:'Ai SME — Thuragirl<br>7-year projection<br>Launch 5 Oct 2026',
+           th:'Ai SME — Thuragirl<br>ประมาณการ 7 ปี<br>เปิดตัว 5 ต.ค. 2026'},
+
+ eb1:{en:'01 — Assumptions',th:'01 — สมมติฐาน'},
+ h1_1:{en:'How this projection was built',th:'โมเดลนี้สร้างมาอย่างไร'},
+ sub1:{en:'What the numbers come from, how they were set, and what this model is meant to answer.',
+       th:'ตัวเลขมาจากไหน ตั้งสมมติฐานไว้อย่างไร และโมเดลนี้ใช้ตอบคำถามอะไร'},
+
+ eb2:{en:'02 — Profit & Loss',th:'02 — งบกำไรขาดทุน'},
+ h1_2:{en:'P&L to EBITDA',th:'งบกำไรขาดทุนถึงระดับ EBITDA'},
+ sub2:{en:'All four scenarios share the same cost structure. They differ in Year 1 sales achievement and whether fixed costs were cut.',
+       th:'ทั้ง 4 scenario ใช้โครงสร้างต้นทุนเดียวกัน ต่างกันที่ระดับความสำเร็จของยอดขายปีแรก และการปรับลดต้นทุนคงที่'},
+ plTitle:{en:'Income statement',th:'งบกำไรขาดทุน'},
+ plCap:{en:'฿ millions · Year 1 = Oct 2026 – Sep 2027',th:'฿ ล้าน · ปีที่ 1 = ต.ค. 2026 – ก.ย. 2027'},
+ cmpTitle:{en:'EBITDA across scenarios',th:'EBITDA เทียบทุก scenario'},
+ mn:{en:'฿ millions',th:'฿ ล้าน'},
+
+ eb3:{en:'03 — Cash Runway',th:'03 — กระแสเงินสด'},
+ h1_3:{en:'How long the cash lasts',th:'เงินสดอยู่ได้ถึงเมื่อไหร่'},
+ sub3:{en:'Move the slider to test how much starting capital each scenario needs.',
+       th:'เลื่อนแถบเพื่อทดลองว่าแต่ละ scenario ต้องใช้เงินทุนตั้งต้นเท่าไหร่'},
+ simTitle:{en:'Starting capital',th:'เงินทุนตั้งต้น'},
+ simCap:{en:'Drag to simulate. Everything below updates.',th:'เลื่อนเพื่อจำลอง ทุกอย่างด้านล่างจะอัปเดตตาม'},
+ simLbl:{en:'Capital in',th:'เงินทุนที่ใส่'},
+ mTitle:{en:'Cash balance, month by month',th:'ยอดเงินสดรายเดือน'},
+ mCap:{en:'<b>Net</b> is cash in minus cash out for that month — how much the month added or burned. <b>Balance</b> is cash left at month end, carried forward. Shaded rows are months where the balance falls below zero.',
+      th:'<b>สุทธิ</b> คือเงินเข้าหักเงินออกของเดือนนั้น บอกว่าเดือนนั้นเพิ่มหรือเผาเงินไปเท่าไหร่ · <b>คงเหลือ</b> คือเงินสดที่เหลือ ณ สิ้นเดือน ยกยอดไปเดือนถัดไป · แถวที่แรเงาคือเดือนที่ยอดคงเหลือติดลบ'},
+ cTitle:{en:'Balance curve',th:'เส้นยอดเงินสด'},
+ cCap:{en:'24 months at the capital set above',th:'24 เดือน ที่เงินทุนซึ่งตั้งไว้ด้านบน'},
+ cmp3Title:{en:'All scenarios at ฿5.0M',th:'ทุก scenario ที่ทุน ฿5.0M'},
+ cmp3Cap:{en:'Same starting capital, so runway compares directly',th:'ทุนตั้งต้นเท่ากัน จึงเปรียบเทียบ runway ได้ตรง'},
+ cfFoot:{en:'Cash flow covers 24 months, so analysis runs to Year 2 only. Year 2 spreads the annual figure evenly across months, making Year 2 timings approximate. Customer payment terms are not modelled.',
+         th:'กระแสเงินสดครอบคลุม 24 เดือน วิเคราะห์ได้ถึงปีที่ 2 เท่านั้น ปีที่ 2 กระจายยอดทั้งปีเป็นรายเดือนเท่ากัน เดือนที่ระบุในปีที่ 2 จึงเป็นค่าประมาณ และยังไม่คิดเครดิตเทอมลูกค้า'},
+
+ eb4:{en:'04 — Execution',th:'04 — แผนดำเนินงาน'},
+ h1_4:{en:'Execution timeline',th:'Timeline ดำเนินงาน'},
+ sub4:{en:'Every workstream against one calendar. Target launch is 5 October 2026 — the same month the model calls Month 1.',
+       th:'ทุกสายงานบนปฏิทินเดียวกัน กำหนดเปิดตัว 5 ตุลาคม 2026 ซึ่งเป็นเดือนเดียวกับเดือนที่ 1 ในโมเดล'},
+ glTitle:{en:'Master schedule',th:'ตารางงานรวม'},
+ glCap:{en:'15 Aug – 8 Nov 2026. Bars are working windows; diamonds are single-day milestones. The dashed red line is today.',
+        th:'15 ส.ค. – 8 พ.ย. 2026 · แถบคือช่วงเวลาทำงาน สี่เหลี่ยมข้าวหลามตัดคือ milestone วันเดียว เส้นประสีแดงคือวันนี้'},
+ tlTableOpen:{en:'Show full task list with notes',th:'ดูรายการงานทั้งหมดพร้อมหมายเหตุ'},
+ tlAllTab:{en:'All workstreams',th:'ทุกสายงาน'},
+ doneBefore:{en:'Completed before this window',th:'เสร็จก่อนช่วงเวลานี้'},
+
+ eb5:{en:'05 — Partners',th:'05 — พาร์ทเนอร์'},
+ h1_5:{en:'Integration partners',th:'พาร์ทเนอร์ที่ต้องเชื่อมต่อ'},
+ sub5:{en:'Who has to be connected before launch, who can come after, and where each one stands today.',
+       th:'ใครต้องเชื่อมต่อให้เสร็จก่อนเปิดตัว ใครตามมาทีหลังได้ และตอนนี้แต่ละรายอยู่ตรงไหน'},
+ pTitle:{en:'Partner status',th:'สถานะพาร์ทเนอร์'},
+ pCap:{en:'Launch-critical partners must be signed and connected before 15 September.',
+       th:'พาร์ทเนอร์ที่เป็น Launch-critical ต้องปิดดีลและเชื่อมระบบให้เสร็จก่อน 15 กันยายน'},
+ pFoot:{en:'Government filings run through ThuraGirl accounts with automation scripts, not a direct API, until official API partnership is granted. Bank reconciliation is Phase 2 and does not gate the October launch.',
+        th:'การยื่นงานภาครัฐใช้บัญชีของ ThuraGirl ร่วมกับ automation script ยังไม่ได้เชื่อม API โดยตรง จนกว่าจะได้สถานะพาร์ทเนอร์ API อย่างเป็นทางการ ส่วนการ reconcile กับธนาคารอยู่ในเฟส 2 จึงไม่กระทบกำหนดเปิดตัวเดือนตุลาคม'},
+
+ eb6:{en:'06 — Brand',th:'06 — แบรนด์'},
+ h1_6:{en:'Brand strategy',th:'กลยุทธ์แบรนด์'},
+ sub6:{en:'The brand foundation agreed in the concept package, and the frame every marketing proposal is built against.',
+       th:'ฐานของแบรนด์ที่สรุปไว้ใน concept package และเป็นกรอบที่ข้อเสนอการตลาดทุกชิ้นต้องอ้างอิง'},
+
+ eb7:{en:'07 — Marketing',th:'07 — การตลาด'},
+ h1_7:{en:'Marketing plan',th:'แผนการตลาด'},
+ sub7:{en:'Structure is set; the numbers come from the agency. Budget is ฿1.5M across four months, with media rolling from 5 October.',
+       th:'โครงวางไว้แล้ว ตัวเลขรอจาก agency งบ ฿1.5M ระยะ 4 เดือน เริ่มลงสื่อ 5 ตุลาคม'},
+ mkAwait:{en:'<b>Awaiting agency.</b> Agency selection and scope split close on 31 August; the plan is finalised through September. These three tabs are the agreed reporting format — once the agency delivers, numbers drop straight into these tables.',
+          th:'<b>รออยู่ที่ agency</b> · การคัดเลือก agency และแบ่ง scope ปิดวันที่ 31 สิงหาคม แล้วสรุปแผนตลอดเดือนกันยายน สามแท็บนี้คือรูปแบบรายงานที่ตกลงกันไว้ เมื่อ agency ส่งงานมา ตัวเลขจะเติมลงตารางนี้ได้ทันที'},
+ mkT0:{en:'Agency brief',th:'บรีฟ Agency'},
+ mkD0:{en:'The ask we put in front of agencies: the money, the window, and the number that counts.',
+       th:'โจทย์ที่เรายื่นให้ agency คือ งบ ระยะเวลา และตัวเลขที่นับจริง'},
+ abHead:{en:'฿1.5M. Four to six months. 850–1,000 paying customers.',
+         th:'฿1.5M · 4–6 เดือน · ลูกค้าจ่ายเงินใหม่ 850–1,000 ราย'},
+ abBudget:{en:'All in',th:'รวมทุกอย่าง'},
+ abBudgetU:{en:'media, content and fees',th:'ค่าสื่อ คอนเทนต์ และค่าบริการ'},
+ abWindow:{en:'Launch window',th:'หน้าต่างเปิดตัว'},
+ abWindowU:{en:'from 5 Oct 2026',th:'เริ่ม 5 ต.ค. 2026'},
+ abCust:{en:'New paying customers',th:'ลูกค้าจ่ายเงินใหม่'},
+ abCustU:{en:'not leads, not clicks',th:'ไม่ใช่ลีด ไม่ใช่คลิก'},
+ abCpa:{en:'Workable cost per customer',th:'ต้นทุนต่อลูกค้าที่รับได้'},
+ abCpaU:{en:'budget ÷ customers',th:'งบ ÷ จำนวนลูกค้า'},
+ abBack:{en:'What we need back',th:'สิ่งที่ต้องส่งกลับมา'},
+ abDeliv:{en:'Deliverable',th:'สิ่งที่ส่งมอบ'},
+ abBack1T:{en:'A media plan for the window',th:'แผนสื่อตลอดหน้าต่างเปิดตัว'},
+ abBack1:{en:'Everything inside the ฿1.5M — media, production and your fee. No line billed on top.',
+          th:'ทุกอย่างต้องอยู่ในงบ ฿1.5M ทั้งค่าสื่อ ค่าผลิต และค่าบริการของ agency ไม่มีรายการเก็บเพิ่ม'},
+ abBack2T:{en:'Targets stated in customers',th:'ตั้งเป้าเป็นจำนวนลูกค้า'},
+ abBack2:{en:'Not impressions, not leads, not clicks. Customers who pay, month by month, against the curve below.',
+          th:'ไม่ใช่ impression ไม่ใช่ลีด ไม่ใช่คลิก แต่เป็นลูกค้าที่จ่ายเงินจริง รายเดือน เทียบกับเส้นด้านล่าง'},
+ abBack3T:{en:'A view on message territory',th:'มุมมองต่อทิศทางข้อความ'},
+ abBack3:{en:'Which of the three starting lines does the work, and what replaces the ones that do not.',
+          th:'ในสามประโยคตั้งต้น ประโยคไหนใช้ได้จริง และประโยคที่ไม่เวิร์กควรแทนด้วยอะไร'},
+ abCurve:{en:'Where we need to be',th:'เป้าที่ต้องไปให้ถึง'},
+ abCurveCap:{en:'Cumulative paying customers, straight from the business plan. This budget takes us to month four.',
+             th:'ลูกค้าจ่ายเงินสะสม ดึงมาจากแผนธุรกิจโดยตรง งบก้อนนี้พาไปถึงเดือนที่ 4'},
+ abMsg:{en:'Starting message territory',th:'ทิศทางข้อความตั้งต้น'},
+ abMsgCap:{en:'Three lines from the deck, offered as a starting point rather than a lock.',
+           th:'สามประโยคจากเดค ใช้เป็นจุดตั้งต้น ไม่ใช่ข้อบังคับ'},
+ abFoot:{en:'Month 4 in the plan is 821 customers and the brief asks for 850–1,000, so the ask sits slightly ahead of the best case. Treat the gap as deliberate stretch, not a modelling error.',
+         th:'เดือนที่ 4 ในแผนอยู่ที่ 821 ราย ส่วนบรีฟขอ 850–1,000 ราย โจทย์จึงตั้งสูงกว่า best case เล็กน้อย ให้ถือว่าเป็นการตั้งเป้าเผื่อ ไม่ใช่ความคลาดเคลื่อนของโมเดล'},
+ mkT1:{en:'Budget — monthly breakdown',th:'งบประมาณรายเดือน'},
+ mkT2:{en:'Content plan',th:'แผนคอนเทนต์'},
+ mkT3:{en:'Performance vs KPI',th:'ผลลัพธ์เทียบ KPI'},
+ mkD1:{en:'Where the ฿1.5M goes, by channel and by month.',th:'งบ ฿1.5M ลงที่ช่องทางไหน เดือนไหน'},
+ mkD2:{en:'What goes out, on which channel, in which week, and who owns it.',th:'จะปล่อยอะไร ช่องทางไหน สัปดาห์ไหน ใครรับผิดชอบ'},
+ mkD3:{en:'Actual results against the targets implied by the financial model.',th:'ผลจริงเทียบเป้าที่มาจากโมเดลการเงิน'},
+
+ /* table + kpi labels */
+ mm:{en:'฿ millions',th:'฿ ล้าน'},
+ yr:{en:'Year',th:'ปีที่'},
+ scenario:{en:'Scenario',th:'Scenario'},
+ custEnd:{en:'Customers, year end',th:'ลูกค้าสิ้นปี'},
+ revenue:{en:'Revenue',th:'รายได้'},
+ cogs:{en:'Cost of sales',th:'ต้นทุนขาย'},
+ gp:{en:'Gross profit',th:'กำไรขั้นต้น'},
+ gm:{en:'Gross margin',th:'อัตรากำไรขั้นต้น'},
+ sell:{en:'Selling expense',th:'ค่าใช้จ่ายในการขาย'},
+ foh:{en:'Front-line staff',th:'ค่าคน Front (CS & Support)'},
+ util:{en:'Utilities & service fees',th:'สาธารณูปโภคและค่าบริการ'},
+ opex:{en:'Operating expense',th:'ค่าใช้จ่ายในการบริหาร'},
+ infra:{en:'Infrastructure & software',th:'Infrastructure และ Software'},
+ mkt:{en:'Marketing',th:'การตลาด'},
+ bo:{en:'Back office',th:'Back Office'},
+ other:{en:'Office & other',th:'สำนักงานและอื่นๆ'},
+ opvar:{en:'Variable expense',th:'ค่าใช้จ่ายผันแปร'},
+ ebitda:{en:'EBITDA',th:'EBITDA'},
+ ebitdam:{en:'EBITDA margin',th:'อัตรา EBITDA'},
+
+ kCustY7:{en:'Customers Y7',th:'ลูกค้า ปีที่ 7'},
+ kRevY7:{en:'Revenue Y7',th:'รายได้ ปีที่ 7'},
+ kEbY1:{en:'EBITDA Y1',th:'EBITDA ปีที่ 1'},
+ kEbY7:{en:'EBITDA Y7',th:'EBITDA ปีที่ 7'},
+ kEbPct:{en:'EBITDA % Y7',th:'EBITDA % ปีที่ 7'},
+ kEbPos:{en:'EBITDA positive',th:'EBITDA เป็นบวก'},
+ uOfRev:{en:'of revenue',th:'ของยอดขาย'},
+ uFirstYr:{en:'first year',th:'ปีแรก'},
+ uYear:{en:'Year',th:'ปีที่'},
+
+ kRunway:{en:'Runway',th:'Runway'},
+ kLowest:{en:'Lowest balance',th:'ยอดต่ำสุด'},
+ kMinCap:{en:'Minimum capital',th:'ทุนขั้นต่ำ'},
+ kBuffer:{en:'With 3-mo buffer',th:'รวม buffer 3 เดือน'},
+ kTopup:{en:'Top-up needed',th:'เงินที่ต้องเติมเพิ่ม'},
+ kBurn:{en:'Monthly burn',th:'ค่าใช้จ่ายต่อเดือน'},
+ uNoShort:{en:'no shortfall',th:'ไม่ขาดมือ'},
+ uUntilOut:{en:'until cash out',th:'ก่อนเงินหมด'},
+ uMonth:{en:'month',th:'เดือนที่'},
+ uToZero:{en:'to clear zero',th:'ให้ไม่ติดลบ'},
+ uRecommended:{en:'recommended',th:'แนะนำ'},
+ uInjections:{en:'injections',th:'ครั้ง'},
+ uNotNeeded:{en:'not needed',th:'ไม่ต้องเติม'},
+ uY1opex:{en:'Year 1 opex',th:'ค่าใช้จ่ายปีที่ 1'},
+ uMo:{en:'mo',th:'เดือน'},
+
+ cashOut:{en:'Cash out',th:'เงินหมดเดือนที่'},
+ lowest:{en:'Lowest',th:'ต่ำสุด'},
+ minCapT:{en:'Min capital',th:'ทุนขั้นต่ำ'},
+ plusBuf:{en:'+ buffer',th:'+ buffer'},
+ topupAt5:{en:'Top-up at ฿5M',th:'เติมเพิ่มที่ทุน ฿5M'},
+ never:{en:'never',th:'ไม่หมด'},
+
+ legBal:{en:'Cash balance',th:'ยอดเงินสด'},
+ legShort:{en:'Short of cash',th:'ช่วงติดลบ'},
+ legZero:{en:'Zero line',th:'ระดับศูนย์'},
+ mNet:{en:'Net',th:'สุทธิ'},
+ mBal:{en:'Balance',th:'คงเหลือ'},
+ y1:{en:'Year 1',th:'ปีที่ 1'},
+ y2:{en:'Year 2',th:'ปีที่ 2'},
+
+ pReset:{en:'Reset to ฿5.0M',th:'กลับไปที่ ฿5.0M'},
+ pMin:{en:'Minimum needed',th:'ขั้นต่ำที่ต้องใช้'},
+ pBuf:{en:'With 3-month buffer',th:'รวม buffer 3 เดือน'},
+
+ mthTitle:{en:'Year 1, month by month',th:'ปีที่ 1 รายเดือน'},
+ mthCap:{en:'฿ millions · Oct 2026 – Sep 2027. Year 1 costs are set as fixed amounts, so they do not move with monthly revenue.',
+         th:'฿ ล้าน · ต.ค. 2026 – ก.ย. 2027 ค่าใช้จ่ายปีแรกตั้งเป็นก้อน จึงไม่ขยับตามรายได้รายเดือน'},
+ mthOpen:{en:'Show monthly detail for Year 1',th:'ดูรายละเอียดรายเดือนของปีที่ 1'},
+ total12:{en:'Year 1 total',th:'รวมปีที่ 1'},
+ /* status labels */
+ stDone:{en:'Done',th:'เสร็จแล้ว'},
+ stProcess:{en:'On process',th:'กำลังดำเนินการ'},
+ stPlan:{en:'Scheduled',th:'ตามแผน'},
+ stTbc:{en:'To be confirmed',th:'รอยืนยัน'},
+ stWait:{en:'Waiting on counterparty',th:'รอฝ่ายตรงข้าม'},
+ stNot:{en:'Not started',th:'ยังไม่เริ่ม'},
+ today:{en:'Today',th:'วันนี้'},
+
+ /* timeline kpis */
+ kToLaunch:{en:'To Phase 1 launch',th:'เหลือถึงเปิดตัวเฟส 1'},
+ kTasks:{en:'Tasks in plan',th:'งานทั้งหมดในแผน'},
+ kDone:{en:'Done',th:'เสร็จแล้ว'},
+ kRunning:{en:'On process',th:'กำลังดำเนินการ'},
+ kCrit:{en:'Launch-critical partners',th:'พาร์ทเนอร์ Launch-critical'},
+ kPhase2:{en:'Phase 2 launch',th:'เปิดตัวเฟส 2'},
+ uDays:{en:'days',th:'วัน'},
+ uOf:{en:'of',th:'จาก'},
+ uOpen:{en:'still open',th:'ยังไม่ปิด'},
+ uBy15Sep:{en:'connect by 15 Sep',th:'ต้องเชื่อมภายใน 15 ก.ย.'},
+ uWithBank:{en:'with bank API',th:'พร้อม Bank API'},
+ launch1:{en:'Launch Phase 1',th:'เปิดตัวเฟส 1'},
+ launch2:{en:'Launch Phase 2',th:'เปิดตัวเฟส 2'},
+
+ /* task/partner table headers */
+ thTask:{en:'Task',th:'งาน'},
+ thWindow:{en:'Window',th:'ช่วงเวลา'},
+ thStatus:{en:'Status',th:'สถานะ'},
+ thNote:{en:'Note',th:'หมายเหตุ'},
+ thPartner:{en:'Partner',th:'พาร์ทเนอร์'},
+ thCat:{en:'Category',th:'ประเภท'},
+ thAction:{en:'Key action',th:'สิ่งที่ต้องทำ'},
+ thCrit:{en:'Launch-critical',th:'Launch-critical'},
+ yes:{en:'Yes',th:'ใช่'},
+ no:{en:'—',th:'—'},
+
+ /* partner kpis */
+ kPartners:{en:'Partners tracked',th:'พาร์ทเนอร์ที่ติดตาม'},
+ kConnected:{en:'Connected',th:'เชื่อมแล้ว'},
+ kInProg:{en:'In progress',th:'กำลังดำเนินการ'},
+ kNotStart:{en:'Not started',th:'ยังไม่เริ่ม'},
+ uCategories:{en:'across 7 categories',th:'ครอบคลุม 7 ประเภท'},
+ uApiLive:{en:'API and commercial agreed',th:'ตกลง API และเงื่อนไขแล้ว'},
+ uContract:{en:'contract or connection',th:'สัญญาหรือการเชื่อมต่อ'},
+ uNoContact:{en:'no engagement yet',th:'ยังไม่ได้เริ่มคุย'},
+
+ /* partner filter tabs */
+ fAll:{en:'All partners',th:'ทั้งหมด'},
+ fCrit:{en:'Launch-critical',th:'Launch-critical'},
+ fOpen:{en:'Open',th:'ยังไม่ปิด'},
+ fDone:{en:'Connected',th:'เชื่อมแล้ว'},
+ fCritCap:{en:'Must be signed and connected before 15 September, or the October launch slips.',
+           th:'ต้องเซ็นและเชื่อมระบบให้เสร็จก่อน 15 กันยายน ไม่อย่างนั้นกำหนดเปิดตัวเดือนตุลาคมจะเลื่อน'},
+ fOpenCap:{en:'Everything not yet connected, launch-critical or not.',th:'ทุกรายที่ยังไม่เชื่อมต่อ ไม่ว่าจะ Launch-critical หรือไม่'},
+ fDoneCap:{en:'API access and commercial terms already agreed.',th:'ตกลงสิทธิ์ API และเงื่อนไขทางการค้าเรียบร้อยแล้ว'},
+ fAllCap:{en:'Sixteen counterparties across government, finance, ERP, channel, marketplace and HR.',
+          th:'พาร์ทเนอร์ 16 รายจากภาครัฐ การเงิน ERP ช่องทาง มาร์เก็ตเพลส และ HR'},
+ noRows:{en:'Nothing in this view',th:'ไม่มีรายการในมุมมองนี้'},
+
+ /* marketing tables */
+ thChannel:{en:'Channel',th:'ช่องทาง'},
+ thTotal:{en:'Total',th:'รวม'},
+ thShare:{en:'Share',th:'สัดส่วน'},
+ thWeek:{en:'Week',th:'สัปดาห์'},
+ thPhase:{en:'Phase',th:'ช่วง'},
+ thTheme:{en:'Theme / message',th:'ธีม / ข้อความ'},
+ thFormat:{en:'Format',th:'รูปแบบ'},
+ thOwner:{en:'Owner',th:'ผู้รับผิดชอบ'},
+ thKpi:{en:'KPI',th:'ตัวชี้วัด'},
+ thDef:{en:'Definition',th:'นิยาม'},
+ thTarget:{en:'Target',th:'เป้า'},
+ thActual:{en:'Actual',th:'ผลจริง'},
+ thVar:{en:'Variance',th:'ส่วนต่าง'},
+ thMonth:{en:'Month',th:'เดือน'},
+ tbd:{en:'TBD',th:'รอข้อมูล'},
+ budgetNote:{en:'Total marketing budget for the launch window is ฿1.5M across four months. The financial model carries a larger Year 1 marketing line — ฿9.4M in the best case — so this is the launch tranche, not the full year.',
+             th:'งบการตลาดช่วงเปิดตัวรวม ฿1.5M ระยะ 4 เดือน โมเดลการเงินตั้งงบการตลาดปีที่ 1 ไว้สูงกว่านี้ — ฿9.4M ใน best case — ตัวเลขนี้จึงเป็นก้อนช่วงเปิดตัว ไม่ใช่ทั้งปี'},
+ contentNote:{en:'Four phases across the launch window: tease before 5 October, launch week, sustain, then convert. The agency fills the rows; the phase structure is fixed.',
+              th:'แบ่งเป็น 4 ช่วงตลอดหน้าต่างเปิดตัว: teaser ก่อน 5 ตุลาคม สัปดาห์เปิดตัว ช่วงประคอง แล้วจึงเร่งปิดการขาย agency เป็นคนเติมรายการ ส่วนโครงช่วงเวลาคงที่'},
+ kpiNote:{en:'Customer targets are pulled straight from the P&L model, so marketing performance reads against the same numbers the projection was built on.',
+          th:'เป้าจำนวนลูกค้าดึงมาจากโมเดลงบกำไรขาดทุนโดยตรง ผลการตลาดจึงอ่านเทียบกับตัวเลขชุดเดียวกับที่ใช้สร้างประมาณการ'},
+ modelTarget:{en:'Customer targets from the model',th:'เป้าลูกค้าจากโมเดล'},
+ mtCap:{en:'Cumulative customers at month end, best case and base case',th:'ลูกค้าสะสม ณ สิ้นเดือน ทั้ง best case และ base case'},
+ mediaSpend:{en:'Model marketing spend',th:'งบการตลาดตามโมเดล'},
+ bestC:{en:'Best case',th:'Best case'},
+ baseC:{en:'Base case',th:'Base case'}
+};
+const t = k => (T[k] ? T[k][LANG] : k);
+
+const SC = {
+  best:{color:'#0E6E63', ach:'100%',
+    name:{en:'Best case',th:'Best Case'},
+    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
+    desc:{en:'Sales land fully on plan, using the conversion rates calculated per channel. This is the base every other scenario scales from.',
+          th:'ยอดขายเป็นไปตามแผนเต็ม 100% ตามอัตราแปลงที่คำนวณไว้รายช่องทาง เป็นฐานที่ scenario อื่นอ้างอิง'},
+    fx:"'1.1'!H3 = 'Traffic'!H3"},
+  base:{color:'#1D4F91', ach:'55%',
+    name:{en:'Base case',th:'Base Case'},
+    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
+    desc:{en:'Sales reach 55% of plan with no additional cost cuts. Costs set as a percentage of revenue fall on their own; fixed amounts stay put.',
+          th:'ยอดขายทำได้ 55% ของแผน โดยไม่มีการสั่งลดต้นทุนเพิ่มเติม รายการที่ตั้งเป็น % ของยอดขายปรับลดเองตามกลไก ส่วนที่ตั้งเป็นก้อนยังคงเดิม'},
+    fx:"'1.1'!H3 = 0.55 × 'Traffic'!H3"},
+  worstadj:{color:'#6B4A96', ach:'10%',
+    name:{en:'Worst case, cut',th:'Worst Case (ปรับ)'},
+    tag:{en:'fixed costs cut',th:'ปรับลดต้นทุนคงที่'},
+    desc:{en:'Sales at 10% of plan with Year 1 fixed costs reduced — CS from 2 to 1, admin from 2 to 1, service fees halved, back office trimmed.',
+          th:'ยอดขายทำได้ 10% ของแผน พร้อมลดต้นทุนคงที่ในปีแรก ลด CS จาก 2 เหลือ 1 คน ลด Admin จาก 2 เหลือ 1 คน ลดค่าบริการครึ่งหนึ่ง และลด back office'},
+    fx:"'1.1'!H3 = 0.10 × 'Traffic'!H3  +  Capex"},
+  worst:{color:'#A33B12', ach:'10%',
+    name:{en:'Worst case',th:'Worst Case'},
+    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
+    desc:{en:'Sales reach only 10% of plan with no additional cost cuts. Tests how much shock the cost structure absorbs.',
+          th:'ยอดขายทำได้เพียง 10% ของแผน โดยไม่มีการสั่งลดต้นทุนเพิ่มเติม ใช้ทดสอบว่าโครงสร้างต้นทุนรับแรงกระแทกได้แค่ไหน'},
+    fx:"'1.1'!H3 = 0.10 × 'Traffic'!H3"}
+};
+const ORDER=['best','base','worstadj','worst'];
+const ofPlan = k => LANG==='en' ? `${SC[k].ach} of planned sales` : `ยอดขายทำได้ ${SC[k].ach} ของแผน`;
+
+/* ================= page 1 doc ================= */
+function docHTML(){
+  const d=D.best, yi=[0,2,4,6];
+  const sumRows = LANG==='en'
+    ? [['Customers','Revenue','Gross profit','EBITDA','EBITDA %','Market share']]
+    : [['ลูกค้า','รายได้','กำไรขั้นต้น','EBITDA','EBITDA %','ส่วนแบ่งตลาด']];
+  const vals=[yi.map(i=>f0(d.cust[i])),yi.map(i=>f1(d.rev[i])),yi.map(i=>f1(d.gp[i])),
+              yi.map(i=>f1(d.ebitda[i])),yi.map(i=>pc(d.ebitda[i],d.rev[i])),yi.map(i=>d.pen[i].toFixed(1)+'%')];
+  const sumTable=`<div class="tw"><table><thead><tr><th>${t('mm')}</th>${[1,3,5,7].map(y=>`<th>${t('yr')} ${y}</th>`).join('')}</tr></thead><tbody>`
+    + sumRows[0].map((l,i)=>`<tr class="${i%2?'zebra':''}"><td>${l}</td>${vals[i].map(v=>`<td class="n">${v}</td>`).join('')}</tr>`).join('')
+    + '</tbody></table></div>';
+
+  const chTable = (h,rows,total)=>`<div class="tw"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join('')
+    + `<tr class="total"><td>${total[0]}</td><td class="n">${total[1]}</td><td class="n">${total[2]}</td></tr></tbody></table></div>`;
+
+  if(LANG==='en') return `
+   <h2><em>01</em>Revenue base</h2>
+   <p>We start from <strong>967,000 active registered companies</strong> (DBD), then filter down to <strong>430,000</strong> — businesses that carry real accounting and tax obligations but have no in-house team.</p>
+   <details><summary>Filter steps and source</summary><div class="body">
+     <ul><li>Less dormant, shell and holding companies</li>
+     <li>Less large enterprises with in-house finance teams</li>
+     <li>Less businesses below the VAT registration threshold</li>
+     <li>Plus voluntary VAT registrants, at 40% of the group removed above</li></ul>
+     <p>The voluntary VAT rate follows Springer (2021), based on Revenue Department tax records from 2014–2017.</p>
+   </div></details>
+   <p>The market splits into five acquisition channels. <strong>Each business is counted once</strong> regardless of how many platforms it uses, so channels hold non-overlapping groups that sum exactly to the target market.</p>
+   ${chTable(['Channel','Businesses','Share'],
+     [['FlowAccount','60,000','14.0%'],['PEAK','40,000','9.3%'],
+      ['E-commerce (Shopee / Lazada / TikTok)','90,000','20.9%'],
+      ['DBD — new registrations per year','47,000','10.9%'],
+      ['Others / organic','193,000','44.9%']],['Target market','430,000','100%'])}
+   <p>Pricing is ฿1,999 (Starter) and ฿3,999 (Growth) per month. Revenue uses the pre-VAT prices of ฿1,868 and ฿3,737.</p>
+
+   <h2><em>02</em>How the numbers are built</h2>
+   <p><strong>Year 1 is calculated bottom-up</strong> — monthly conversion rates set per channel and per product, ramping across 12 months as awareness and partnerships build. Month 1 is October, when the MVP goes live.</p>
+   <p><strong>Years 2–7 are projected</strong>, not rebuilt. Modelling every channel monthly for seven years would mean revising 5 channels × 2 products × 12 months on every change, without improving accuracy enough to change any decision.</p>
+   <div class="tw"><table><thead><tr><th>Control variable</th><th>Setting</th></tr></thead><tbody>
+     <tr><td>New customer growth, monthly</td><td class="n">5% (Y2) · 1% (Y3) · 0.5% (Y4+)</td></tr>
+     <tr><td>Churn</td><td class="n">3% per month, flat every year</td></tr>
+     <tr><td>Cost of sales</td><td class="n">45% / 40%</td></tr>
+     <tr><td>Front-line staff and infrastructure</td><td class="n">2% of revenue each</td></tr>
+   </tbody></table></div>
+   <p>Churn is held flat rather than improving with customer age, to keep it conservative. The overall guardrail is market share against the 430,000 target — Year 7 lands at 10.7%.</p>
+
+   <h2><em>03</em>Cost assumptions</h2>
+   <div class="tw"><table><thead><tr><th>Category</th><th style="text-align:left">Basis</th></tr></thead><tbody>
+     <tr><td>Cost of sales</td><td class="free">45% / 40% flat — covers AI usage, CPA fees and bookkeeper fees</td></tr>
+     <tr><td>Front-line (CS &amp; support)</td><td class="free">2% of revenue</td></tr>
+     <tr><td>Back office</td><td class="free">Fixed headcount, 5% annual salary increase</td></tr>
+     <tr><td>Product development</td><td class="free">฿0 — held in the JV with the dev team</td></tr>
+     <tr><td>Infrastructure</td><td class="free">2% of revenue</td></tr>
+     <tr><td>Capex and office</td><td class="free">฿0 — fully remote, so no depreciation</td></tr>
+     <tr><td>Marketing</td><td class="free">Fixed budget in Y1, then 12% falling to 9% of revenue</td></tr>
+   </tbody></table></div>
+   <div class="pull"><strong>Support capacity: one person per 800–1,000 customers.</strong> Based on roughly 1,000 support cases per person per month (45 a day), with each customer generating no more than one case a month. The unit is <strong>customers, not accounting transactions</strong> — transaction volume does not drive headcount because the system processes it.</div>
+   <details><summary>Why support load stays this low</summary><div class="body">
+     <p>Onboarding and FAQ run on AI and bots. Every module connects to third parties by API, so there is no human in the loop in the accounting process itself. Where an automatic connection is not possible, the customer completes the step and uploads the result. Staff review exceptions and handle general support.</p>
+   </div></details>
+   <p>From Year 2, costs follow the ratios seen in the closing months of Year 1. Items that are fixed by nature — including payroll — are still set as a percentage of revenue, because this is a budget frame: if revenue falls short, these costs have to come down with it. Other fixed costs do not flex.</p>
+   <div class="pull">The result is that <strong>margin structure does not change with scale</strong> — EBITDA sits near 21% whether growth runs fast or slow.</div>
+
+   <h2><em>04</em>Cash flow scope</h2>
+   <p>Built at <strong>managerial level</strong>: operating cash in and out against ฿5.0M of starting capital, covering 24 months, to show runway.</p>
+   <p>It excludes interest, customer and supplier payment terms, and financing detail. Year 2 spreads the annual figure evenly across months. Use it to judge whether capital is sufficient and when to top up — not as a financing cash flow statement.</p>
+
+   <h2><em>05</em>Results — Best Case</h2>
+   ${sumTable}
+`;
+
+  return `
+   <h2><em>01</em>ที่มาของฐานลูกค้า</h2>
+   <p>เริ่มจากนิติบุคคลที่ยัง active ในระบบ DBD <strong>967,000 ราย</strong> แล้วกรองลงเหลือ <strong>430,000 ราย</strong> คือกิจการที่มีภาระทางบัญชีและภาษีจริง แต่ไม่มีทีมทำเอง</p>
+   <details><summary>ขั้นตอนการกรองและแหล่งอ้างอิง</summary><div class="body">
+     <ul><li>หักกิจการที่ไม่มีกิจกรรมทางธุรกิจจริง (dormant / shell / holding)</li>
+     <li>หักองค์กรขนาดใหญ่ที่มีทีมบัญชีภายในอยู่แล้ว</li>
+     <li>หักกิจการที่รายได้ต่ำกว่าเกณฑ์จดทะเบียน VAT</li>
+     <li>บวกกลับกลุ่มที่จด VAT โดยสมัครใจ ในอัตรา 40% ของกลุ่มที่ถูกหักออก</li></ul>
+     <p>อัตราการจด VAT สมัครใจอ้างอิงงานวิจัย Springer (2021) ซึ่งใช้ข้อมูลภาษีจริงจากกรมสรรพากรช่วงปี 2014–2017</p>
+   </div></details>
+   <p>ตลาดแบ่งเป็น 5 ช่องทางเข้าถึง โดย <strong>1 กิจการนับเพียงครั้งเดียว</strong> ไม่ว่าจะใช้กี่แพลตฟอร์ม แต่ละช่องทางจึงถือครองกลุ่มย่อยที่ไม่ทับซ้อนกัน และรวมกันได้เท่ากับตลาดเป้าหมายพอดี</p>
+   ${chTable(['ช่องทาง','จำนวนกิจการ','สัดส่วน'],
+     [['FlowAccount','60,000','14.0%'],['PEAK','40,000','9.3%'],
+      ['E-Commerce (Shopee / Lazada / TikTok)','90,000','20.9%'],
+      ['DBD — จดทะเบียนใหม่รายปี','47,000','10.9%'],
+      ['Others / Organic','193,000','44.9%']],['รวมตลาดเป้าหมาย','430,000','100%'])}
+   <p>ราคา Starter ฿1,999 และ Growth ฿3,999 ต่อเดือน โมเดลคำนวณรายได้จากราคาก่อน VAT ที่ ฿1,868 และ ฿3,737</p>
+
+   <h2><em>02</em>วิธีสร้างตัวเลข</h2>
+   <p><strong>ปีที่ 1 คำนวณจากล่างขึ้นบน</strong> กำหนดอัตราแปลงรายเดือน แยกตามช่องทางและแยกตามสินค้า ไต่ระดับตลอด 12 เดือนตามการสร้างการรับรู้และการเชื่อมต่อพันธมิตร เดือนที่ 1 คือตุลาคม ซึ่งเป็นเดือนที่ MVP พร้อมใช้งาน</p>
+   <p><strong>ปีที่ 2–7 ใช้การฉาย</strong> ไม่ได้สร้างใหม่ เพราะการทำระดับช่องทางรายเดือนตลอด 7 ปี หมายถึงต้องแก้ 5 ช่องทาง × 2 สินค้า × 12 เดือน ทุกครั้งที่ปรับสมมติฐาน โดยไม่ได้เพิ่มความแม่นยำมากพอที่จะเปลี่ยนการตัดสินใจ</p>
+   <div class="tw"><table><thead><tr><th>ตัวแปรควบคุม</th><th>ค่าที่ตั้งไว้</th></tr></thead><tbody>
+     <tr><td>อัตราเติบโตของลูกค้าใหม่รายเดือน</td><td class="n">5% (ปี 2) · 1% (ปี 3) · 0.5% (ปี 4+)</td></tr>
+     <tr><td>Churn</td><td class="n">3% ต่อเดือน คงที่ทุกปี</td></tr>
+     <tr><td>ต้นทุนขาย</td><td class="n">45% / 40%</td></tr>
+     <tr><td>ค่าคน Front และ Infrastructure</td><td class="n">2% ของยอดขาย อย่างละ</td></tr>
+   </tbody></table></div>
+   <p>Churn ตั้งคงที่ ไม่ปรับดีขึ้นตามอายุลูกค้า เพื่อให้เป็นค่าที่ conservative ส่วน guardrail ภาพรวมคือส่วนแบ่งตลาดเทียบเป้าหมาย 430,000 ราย ซึ่งปีที่ 7 อยู่ที่ 10.7%</p>
+
+   <h2><em>03</em>สมมติฐานค่าใช้จ่าย</h2>
+   <div class="tw"><table><thead><tr><th>หมวด</th><th style="text-align:left">วิธีตั้ง</th></tr></thead><tbody>
+     <tr><td>ต้นทุนขาย</td><td class="free">45% / 40% คงที่ ครอบคลุมค่า AI usage ค่า CPA และค่าผู้ทำบัญชี</td></tr>
+     <tr><td>ค่าคน Front (CS &amp; Support)</td><td class="free">2% ของยอดขาย</td></tr>
+     <tr><td>Back Office</td><td class="free">จำนวนคนคงที่ ปรับขึ้นเงินเดือน 5% ต่อปี</td></tr>
+     <tr><td>ค่าพัฒนาระบบ</td><td class="free">฿0 อยู่ในโครงสร้าง JV กับทีม dev</td></tr>
+     <tr><td>Infrastructure</td><td class="free">2% ของยอดขาย</td></tr>
+     <tr><td>Capex และสำนักงาน</td><td class="free">฿0 ทำงาน remote ทั้งหมด จึงไม่มีค่าเสื่อมราคา</td></tr>
+     <tr><td>การตลาด</td><td class="free">ปีแรกเป็นงบก้อน จากนั้น 12% ไล่ลงเป็น 9% ของยอดขาย</td></tr>
+   </tbody></table></div>
+   <div class="pull"><strong>Capacity: 1 คน ต่อลูกค้า 800–1,000 ราย</strong> ตั้งบนฐาน 1 คนรับได้ราว 1,000 เคส support ต่อเดือน (45 เคสต่อวัน) โดยลูกค้า 1 รายสร้างไม่เกิน 1 เคสต่อเดือน หน่วยคือ <strong>ราย ไม่ใช่รายการทางบัญชี</strong> จำนวน transaction ต่อลูกค้าไม่กระทบจำนวนพนักงาน เพราะระบบประมวลผลทั้งหมด</div>
+   <details><summary>ทำไมภาระงาน support ถึงต่ำได้ขนาดนี้</summary><div class="body">
+     <p>งาน onboarding และ FAQ ใช้ AI และ bot ทุก module เชื่อมต่อกับ third party ผ่าน API จึงไม่มี human-in-the-loop ในกระบวนการบัญชี รายการที่เชื่อมอัตโนมัติไม่ได้ ลูกค้าดำเนินการเองแล้ว upload กลับเข้าระบบ พนักงานตรวจเฉพาะรายการ exception และรับ support ทั่วไป</p>
+   </div></details>
+   <p>ตั้งแต่ปีที่ 2 ค่าใช้จ่ายยึดสัดส่วนที่เห็นในเดือนท้ายๆ ของปีที่ 1 รายการที่ธรรมชาติเป็น fixed cost รวมถึงค่าคน ก็ยังตั้งเป็น % ของยอดขาย เพราะเป็นการวางกรอบงบประมาณ หากยอดขายไม่ถึงเป้า ค่าใช้จ่ายกลุ่มนี้ต้องปรับลดตาม ส่วน fixed cost อื่นไม่ปรับ</p>
+   <div class="pull">ผลที่ตามมาคือ <strong>โครงสร้างกำไรไม่เปลี่ยนตามขนาด</strong> EBITDA อยู่ที่ราว 21% ไม่ว่าจะโตเร็วหรือช้า</div>
+
+   <h2><em>04</em>ขอบเขตของ Cash Flow</h2>
+   <p>จัดทำใน <strong>ระดับ managerial</strong> คือเงินเข้าและออกจากการดำเนินงาน เทียบกับเงินทุนตั้งต้น ฿5.0M ครอบคลุม 24 เดือน เพื่อดู runway</p>
+   <p>ไม่รวมดอกเบี้ย เครดิตเทอมลูกค้าและเจ้าหนี้ และรายละเอียดทางการเงิน ปีที่ 2 กระจายยอดทั้งปีเป็นรายเดือนเท่ากัน ใช้ตัดสินว่าเงินทุนพอหรือไม่ และควรเติมเมื่อไหร่ ไม่ใช่งบกระแสเงินสดสำหรับการจัดหาเงินทุน</p>
+
+   <h2><em>05</em>ผลลัพธ์ — Best Case</h2>
+   ${sumTable}`;
+}
+
+/* ================= helpers ================= */
+const f1=v=>(v/1e6).toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1});
+const f0=v=>Math.round(v).toLocaleString('en-US');
+const pc=(a,b)=>b?(a/b*100).toFixed(1)+'%':'—';
+const THB=v=>(v<0?'−฿':'฿')+(Math.abs(v)/1e6).toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1})+'M';
+const setAccent=k=>document.documentElement.style.setProperty('--sc',SC[k].color);
+const bal=(k,cap)=>D[k].cf.map(v=>v+(cap-CAP0));
+const minCap=k=>CAP0-Math.min(0,Math.min(...D[k].cf));
+const minCapBuf=k=>minCap(k)+3*D[k].opexmo;
+const roundUp=(v,s)=>Math.ceil(v/s)*s;
+function stagedPlan(k,cap,floor){
+  const cf=D[k].cf; let add=0,out=[];
+  for(let m=0;m<cf.length;m++){
+    const b=cf[m]+(cap-CAP0)+add;
+    if(b<floor){const amt=Math.ceil((floor-b)/500000)*500000;out.push([m+1,amt]);add+=amt;}
+  }
+  return {list:out,total:add};
+}
+const dot=c=>`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${c};margin-right:8px"></span>`;
+
+/* ================= renderers ================= */
+function buildTabs(id,cb,cur){
+  const el=document.getElementById(id);
+  el.innerHTML=ORDER.map(k=>`<button class="${k===cur?'on':''}" data-s="${k}"><i></i>${SC[k].name[LANG]}</button>`).join('');
+}
+function renderPL(k){
+  curPL=k; setAccent(k); const d=D[k],s=SC[k];
+  document.getElementById('logic2').innerHTML=
+    `<b>${s.name[LANG]}</b> — ${ofPlan(k)} · ${s.tag[LANG]}<br>${s.desc[LANG]}`;
+  const L=6,bep=d.ebitda.findIndex(v=>v>0);
+  document.getElementById('kpi2').innerHTML=[
+    [t('kCustY7'),f0(d.cust[L]),'',''],
+    [t('kRevY7'),f1(d.rev[L]),t('mn'),''],
+    [t('kEbY1'),f1(d.ebitda[0]),t('mn'),d.ebitda[0]<0?'neg':'pos'],
+    [t('kEbY7'),f1(d.ebitda[L]),t('mn'),'pos'],
+    [t('kEbPct'),pc(d.ebitda[L],d.rev[L]),t('uOfRev'),''],
+    [t('kEbPos'),bep<0?'—':t('uYear')+' '+(bep+1),t('uFirstYr'),'']
+  ].map(x=>`<div class="kpi"><div class="k">${x[0]}</div><div class="v ${x[3]}">${x[1]}</div><div class="u">${x[2]}</div></div>`).join('');
+
+  const R=(l,a,c='')=>`<tr class="${c}"><td>${l}</td>${a.map(v=>`<td class="n ${v<0?'neg':''}">${f1(v)}</td>`).join('')}</tr>`;
+  const P=(l,nu,de)=>`<tr class="pct"><td>${l}</td>${nu.map((v,i)=>`<td class="n">${pc(v,de[i])}</td>`).join('')}</tr>`;
+  document.getElementById('pl2').innerHTML=
+   `<table><thead><tr><th>${t('mm')}</th>${[1,2,3,4,5,6,7].map(y=>`<th>${t('yr')} ${y}</th>`).join('')}</tr></thead><tbody>
+    <tr class="sub"><td>${t('custEnd')}</td>${d.cust.map(v=>`<td class="n">${f0(v)}</td>`).join('')}</tr>
+    ${R(t('revenue'),d.rev,'head')}${R(t('cogs'),d.cogs,'sub')}
+    ${R(t('gp'),d.gp,'head')}${P(t('gm'),d.gp,d.rev)}
+    ${R(t('sell'),d.sell,'head')}${R(t('foh'),d.foh,'sub')}${R(t('util'),d.util,'sub')}
+    ${R(t('opex'),d.opex,'head')}${R(t('infra'),d.infra,'sub')}${R(t('mkt'),d.mkt,'sub')}
+    ${R(t('bo'),d.bo,'sub')}${R(t('other'),d.rent.map((v,i)=>v+d.misc[i]),'sub')}${R(t('opvar'),d.opvar,'sub')}
+    ${R(t('ebitda'),d.ebitda,'total')}${P(t('ebitdam'),d.ebitda,d.rev)}
+    </tbody></table>`;
+  renderMonthlyPL(k);
+}
+
+function renderMonthlyPL(k){
+  const m=D[k].m; if(!m) return;
+  const sum=a=>a.reduce((x,y)=>x+y,0);
+  const RM=(l,a,c='')=>`<tr class="${c}"><td>${l}</td>${a.map(v=>`<td class="n ${v<0?'neg':''}">${f1(v)}</td>`).join('')}<td class="n tot ${sum(a)<0?'neg':''}">${f1(sum(a))}</td></tr>`;
+  const PM=(l,nu,de)=>`<tr class="pct"><td>${l}</td>${nu.map((v,i)=>`<td class="n">${pc(v,de[i])}</td>`).join('')}<td class="n tot">${pc(sum(nu),sum(de))}</td></tr>`;
+  document.getElementById('pl2m').innerHTML=
+   `<table class="mth"><thead><tr><th>${t('mm')}</th>${MN[LANG].map(x=>`<th>${x}</th>`).join('')}<th class="tot">${t('total12')}</th></tr></thead><tbody>
+    <tr class="sub"><td>${t('custEnd')}</td>${m.cust.map(v=>`<td class="n">${f0(v)}</td>`).join('')}<td class="n tot">${f0(m.cust[11])}</td></tr>
+    ${RM(t('revenue'),m.rev,'head')}${RM(t('cogs'),m.cogs,'sub')}
+    ${RM(t('gp'),m.gp,'head')}${PM(t('gm'),m.gp,m.rev)}
+    ${RM(t('sell'),m.sell,'head')}${RM(t('foh'),m.foh,'sub')}${RM(t('util'),m.util,'sub')}
+    ${RM(t('opex'),m.opex,'head')}${RM(t('infra'),m.infra,'sub')}${RM(t('mkt'),m.mkt,'sub')}
+    ${RM(t('bo'),m.bo,'sub')}${RM(t('other'),m.rent.map((v,i)=>v+m.misc[i]),'sub')}${RM(t('opvar'),m.opvar,'sub')}
+    ${RM(t('ebitda'),m.ebitda,'total')}${PM(t('ebitdam'),m.ebitda,m.rev)}
+    </tbody></table>`;
+}
+function renderCmp2(){
+  document.getElementById('cmp2').innerHTML=
+   `<table><thead><tr><th>${t('scenario')}</th>${[1,2,3,4,5,6,7].map(y=>`<th>${t('yr')} ${y}</th>`).join('')}</tr></thead><tbody>
+    ${ORDER.map((k,i)=>`<tr class="${i%2?'zebra':''}"><td>${dot(SC[k].color)}${SC[k].name[LANG]} <span style="color:var(--muted);font-size:11.5px">${SC[k].ach}</span></td>${D[k].ebitda.map(v=>`<td class="n ${v<0?'neg':''}">${f1(v)}</td>`).join('')}</tr>`).join('')}
+    </tbody></table>`;
+}
+
+function chart(vals){
+  const W=920,H=250,PL=50,PR=14,PT=16,PB=28,iw=W-PL-PR,ih=H-PT-PB;
+  const mx=Math.max(...vals,1e6),mn=Math.min(...vals,-1e6),pad=(mx-mn)*.08;
+  const hi=mx+pad,lo=mn-pad;
+  const X=i=>PL+i*(iw/(vals.length-1)),Y=v=>PT+(hi-v)/(hi-lo)*ih,y0=Y(0);
+  const pts=vals.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+  const area=`M ${X(0)},${y0.toFixed(1)} L ${pts.split(' ').join(' L ')} L ${X(vals.length-1).toFixed(1)},${y0.toFixed(1)} Z`;
+  let grid='';const step=Math.max(1e6,Math.ceil((hi-lo)/5/1e6)*1e6);
+  for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step)
+    grid+=`<line class="gl" x1="${PL}" x2="${W-PR}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"/><text class="axt" x="${PL-8}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${(v/1e6).toFixed(0)}M</text>`;
+  let xl='';for(let i=0;i<vals.length;i+=3)xl+=`<text class="axt" x="${X(i).toFixed(1)}" y="${H-9}" text-anchor="middle">M${i+1}</text>`;
+  const fn=vals.findIndex(v=>v<0);
+  const lab=LANG==='en'?`Cash out M${fn+1}`:`เงินหมด M${fn+1}`;
+  const mk=fn<0?'':`<line class="mkline" x1="${X(fn).toFixed(1)}" x2="${X(fn).toFixed(1)}" y1="${PT}" y2="${H-PB}"/><text class="mklab" x="${(X(fn)+6).toFixed(1)}" y="${PT+11}">${lab}</text>`;
+  const ti=vals.indexOf(Math.min(...vals));
+  const dd=vals[ti]<0?`<circle class="dotneg" cx="${X(ti).toFixed(1)}" cy="${Y(vals[ti]).toFixed(1)}" r="4.5"/>`:'';
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">
+    <defs><clipPath id="cp"><rect x="${PL}" y="${PT}" width="${iw}" height="${Math.max(0,y0-PT).toFixed(1)}"/></clipPath>
+    <clipPath id="cn"><rect x="${PL}" y="${y0.toFixed(1)}" width="${iw}" height="${Math.max(0,H-PB-y0).toFixed(1)}"/></clipPath></defs>
+    ${grid}<path class="cfillpos" d="${area}" clip-path="url(#cp)"/><path class="cfillneg" d="${area}" clip-path="url(#cn)"/>
+    <line class="zl" x1="${PL}" x2="${W-PR}" y1="${y0.toFixed(1)}" y2="${y0.toFixed(1)}"/>
+    ${mk}<polyline class="cline" points="${pts}"/>${dd}${xl}</svg>`;
+}
+
+const MN={en:['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'],
+          th:['ต.ค.','พ.ย.','ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.']};
+function monthly(b,cap){
+  const nets=b.map((v,i)=>i?v-b[i-1]:v-cap);
+  const scale=Math.max(...b.map(Math.abs),1);
+  const row=i=>{
+    const v=b[i],net=nets[i],neg=v<0,w=Math.min(100,Math.abs(v)/scale*100);
+    const col=neg?'var(--neg)':'var(--sc)';
+    const bar=neg?`<b style="right:50%;width:${w/2}%;background:${col}"></b>`
+                 :`<b style="left:50%;width:${w/2}%;background:${col}"></b>`;
+    const nf=Math.abs(net)>=1e5?(Math.abs(net)/1e6).toFixed(1)+'M':Math.round(Math.abs(net)/1e3)+'k';
+    return `<div class="mrow ${neg?'short':''}"><span class="m">${MN[LANG][i%12]}</span>
+      <span class="bar">${bar}</span><span class="net">${net>=0?'+':'−'}${nf}</span>
+      <span class="bal">${THB(v)}</span></div>`;
+  };
+  const head=`<div class="mhead"><span></span><span></span><span>${t('mNet')}</span><span>${t('mBal')}</span></div>`;
+  return `<div class="mcol"><h4>${t('y1')}</h4>${head}${[...Array(12).keys()].map(row).join('')}</div>
+          <div class="mcol"><h4>${t('y2')}</h4>${head}${[...Array(12).keys()].map(i=>row(i+12)).join('')}</div>`;
+}
+
+function renderCF(k,keep){
+  curCF=k; setAccent(k); const s=SC[k];
+  document.getElementById('logic3').innerHTML=
+    `<b>${s.name[LANG]}</b> — ${ofPlan(k)} · ${s.tag[LANG]}<br>${s.desc[LANG]}`;
+  const need=roundUp(minCap(k),250000), buf=Math.min(20000000,roundUp(minCapBuf(k),250000));
+  document.getElementById('presets').innerHTML=
+    `<button data-v="${CAP0}">${t('pReset')}</button>
+     <button data-v="${need}">${t('pMin')} · ${THB(need)}</button>
+     <button data-v="${buf}">${t('pBuf')} · ${THB(buf)}</button>`;
+  document.getElementById('legend3').innerHTML=
+    `<span><i style="background:var(--sc)"></i>${t('legBal')}</span>
+     <span><i style="background:var(--neg)"></i>${t('legShort')}</span>
+     <span><i style="background:var(--ink);height:1px"></i>${t('legZero')}</span>`;
+  if(!keep) document.getElementById('slider').value=CAP0;
+  update();
+}
+function update(){
+  const k=curCF,cap=+document.getElementById('slider').value;
+  const b=bal(k,cap),d=D[k];
+  const trough=Math.min(...b),ti=b.indexOf(trough),fn=b.findIndex(v=>v<0),safe=trough>=0;
+  const need=roundUp(minCap(k),250000), plan=stagedPlan(k,cap,0);
+  const el=document.getElementById('simamt');
+  el.textContent=THB(cap); el.style.color=safe?'var(--ok)':'var(--neg)';
+
+  const v=document.getElementById('verdict');
+  v.className='verdict '+(safe?'ok':'bad');
+  v.innerHTML= safe
+    ? (LANG==='en'
+       ? `<span class="ic">✓</span><div>Cash stays positive for all 24 months. Lowest point is <b>${THB(trough)}</b> in month ${ti+1}.${cap>need?` You could go as low as <b>${THB(need)}</b> and still clear zero.`:''}</div>`
+       : `<span class="ic">✓</span><div>เงินสดเป็นบวกตลอด 24 เดือน จุดต่ำสุดอยู่ที่ <b>${THB(trough)}</b> ในเดือนที่ ${ti+1}${cap>need?` ลดลงได้ถึง <b>${THB(need)}</b> ก็ยังไม่ติดลบ`:''}</div>`)
+    : (LANG==='en'
+       ? `<span class="ic">!</span><div>Cash runs out in <b>month ${fn+1}</b> and bottoms at <b>${THB(trough)}</b> in month ${ti+1}. Raise starting capital to <b>${THB(need)}</b>, or top up ${plan.total?`<b>${THB(plan.total)}</b> across ${plan.list.length} injections starting month ${plan.list[0][0]}`:'later'}.</div>`
+       : `<span class="ic">!</span><div>เงินหมดใน <b>เดือนที่ ${fn+1}</b> และต่ำสุดที่ <b>${THB(trough)}</b> ในเดือนที่ ${ti+1} ต้องเพิ่มทุนตั้งต้นเป็น <b>${THB(need)}</b> หรือทยอยเติม ${plan.total?`<b>${THB(plan.total)}</b> รวม ${plan.list.length} ครั้ง เริ่มเดือนที่ ${plan.list[0][0]}`:''}</div>`);
+
+  document.getElementById('kpi3').innerHTML=[
+    [t('kRunway'),safe?'24+ '+t('uMo'):fn+' '+t('uMo'),safe?t('uNoShort'):t('uUntilOut'),safe?'pos':'neg'],
+    [t('kLowest'),THB(trough),t('uMonth')+' '+(ti+1),trough<0?'neg':'pos'],
+    [t('kMinCap'),THB(need),t('uToZero'),''],
+    [t('kBuffer'),THB(minCapBuf(k)),t('uRecommended'),''],
+    [t('kTopup'),plan.total?THB(plan.total):'—',plan.total?plan.list.length+' '+t('uInjections'):t('uNotNeeded'),''],
+    [t('kBurn'),THB(d.opexmo),t('uY1opex'),'']
+  ].map(x=>`<div class="kpi"><div class="k">${x[0]}</div><div class="v ${x[3]||''}">${x[1]}</div><div class="u">${x[2]}</div></div>`).join('');
+
+  document.getElementById('months3').innerHTML=monthly(b,cap);
+  document.getElementById('chart3').innerHTML=chart(b);
+}
+function renderCmp3(){
+  document.getElementById('cmp3').innerHTML=
+   `<table><thead><tr><th>${t('scenario')}</th><th>${t('cashOut')}</th><th>${t('lowest')}</th><th>${t('minCapT')}</th><th>${t('plusBuf')}</th><th>${t('topupAt5')}</th></tr></thead><tbody>
+    ${ORDER.map((k,i)=>{const d=D[k],p=stagedPlan(k,CAP0,0);return `<tr class="${i%2?'zebra':''}">
+     <td>${dot(SC[k].color)}${SC[k].name[LANG]}</td>
+     <td class="n ${d.firstneg?'neg':''}">${d.firstneg?'M'+d.firstneg:t('never')}</td>
+     <td class="n ${d.trough<0?'neg':''}">${THB(d.trough)}</td>
+     <td class="n">${THB(minCap(k))}</td><td class="n">${THB(minCapBuf(k))}</td>
+     <td class="n">${p.total?THB(p.total):'—'}</td></tr>`}).join('')}
+    </tbody></table>`;
+}
+
+/* ================= 04 execution timeline ================= */
+let curP='all', curMkt='b0', curBr='found';
+
+const ST={
+  done   :{c:'#0E6E63',k:'stDone'},
+  process:{c:'#B5720E',k:'stProcess'},
+  plan   :{c:'#8B99A8',k:'stPlan'},
+  tbc    :{c:'#6B4A96',k:'stTbc'},
+  wait   :{c:'#1D4F91',k:'stWait'},
+  not    :{c:'#B6BEC7',k:'stNot'}
+};
+const GRP={
+  strat:{en:'01 · Strategy & concept',th:'01 · กลยุทธ์และคอนเซปต์'},
+  prod :{en:'02 · Product development',th:'02 · พัฒนาผลิตภัณฑ์'},
+  mkt  :{en:'03 · Marketing',th:'03 · การตลาด'},
+  team :{en:'04 · Partner & team onboarding',th:'04 · Onboard พาร์ทเนอร์และทีม'}
+};
+const TLD={
+  all :{en:'Everything on one calendar. The critical path runs through partner signing on 15 September — nothing after it moves without it.',
+        th:'ทุกอย่างอยู่บนปฏิทินเดียวกัน เส้นทางวิกฤตอยู่ที่การเซ็นพาร์ทเนอร์วันที่ 15 กันยายน งานหลังจากนั้นเดินไม่ได้ถ้าข้อนี้ไม่จบ'},
+  prod:{en:'Seven task modules groomed in parallel to 5 September, then development closes, UAT runs, and the build freezes on 30 September.',
+        th:'งาน 7 โมดูล groom คู่ขนานถึง 5 กันยายน จากนั้นปิดการพัฒนา ทำ UAT และ freeze scope วันที่ 30 กันยายน'},
+  mkt :{en:'Agency locked by 31 August, plan and production through September, media rolling from launch day.',
+        th:'เลือก agency ให้จบภายใน 31 สิงหาคม วางแผนและผลิตงานตลอดกันยายน แล้วเริ่มลงสื่อวันเปิดตัว'},
+  team:{en:'Legal and contracts first, signing in the week of 9 September, then onboarding and SOP training before UAT.',
+        th:'เริ่มที่กฎหมายและสัญญา เซ็นในสัปดาห์ของ 9 กันยายน แล้ว onboard และอบรม SOP ก่อนเข้า UAT'}
+};
+
+const TASKS=[
+ {g:'strat',id:'1.1',st:'done',n:{en:'Concept & strategy package',th:'แพ็กเกจคอนเซปต์และกลยุทธ์'}},
+ {g:'strat',id:'1.2',st:'done',n:{en:'Focus group and research',th:'Focus group และงานวิจัย'}},
+ {g:'strat',id:'1.3',st:'done',n:{en:'Final concept and feature cards',th:'สรุปคอนเซปต์และ feature cards'}},
+ {g:'strat',id:'1.4',st:'done',n:{en:'Brand book and brand strategy',th:'Brand book และกลยุทธ์แบรนด์'}},
+ {g:'strat',id:'1.5',st:'done',n:{en:'Financial projection',th:'ประมาณการทางการเงิน'}},
+
+ {g:'prod',id:'2.1',s:'2026-08-18',e:'2026-08-20',st:'process',n:{en:'Additional scopes and requirements grooming',th:'Grooming scope และ requirement เพิ่มเติม'}},
+ {g:'prod',id:'2.2',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 1 — DBD company registration',th:'งานที่ 1 — จดทะเบียนบริษัท DBD'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.3',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 2 — Revenue',th:'งานที่ 2 — รายได้'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.4',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 3 — Expense',th:'งานที่ 3 — ค่าใช้จ่าย'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.5',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 4 — Tax filing',th:'งานที่ 4 — ยื่นภาษี'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.6',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 5 — Chat agent',th:'งานที่ 5 — Chat agent'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.7',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 6 — Payroll',th:'งานที่ 6 — เงินเดือน'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.8',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Task 7 — Book closing',th:'งานที่ 7 — ปิดบัญชี'},note:{en:'Groomed further from latest comments',th:'Grooming เพิ่มจาก latest comment'}},
+ {g:'prod',id:'2.9',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Ops portal (TG admin + tax partner)',th:'Ops Portal (แอดมิน TG + พาร์ทเนอร์ภาษี)'},note:{en:'Shared surface with partners',th:'หน้าจอที่ใช้ร่วมกับพาร์ทเนอร์'}},
+ {g:'prod',id:'2.10',s:'2026-08-20',e:'2026-09-05',st:'process',n:{en:'Automation scripts',th:'Automation scripts'},note:{en:'DBD, tax filing, SSO',th:'DBD, ยื่นภาษี, SSO'}},
+ {g:'prod',id:'2.11',s:'2026-09-05',e:'2026-09-08',st:'plan',n:{en:'Internal capability audit + gap analysis',th:'ตรวจความพร้อมภายใน + gap analysis'}},
+ {g:'prod',id:'2.12',s:'2026-09-09',e:'2026-09-15',st:'plan',n:{en:'Partner engagement (DBD, SSO, Revenue Dept, bank, marketplace, ERP)',th:'เจรจาพาร์ทเนอร์ (DBD, SSO, สรรพากร, ธนาคาร, มาร์เก็ตเพลส, ERP)'},note:{en:'Tentative list; confirmed upon signing',th:'รายชื่อเบื้องต้น ยืนยันเมื่อเซ็นสัญญา'}},
+ {g:'prod',id:'2.13',s:'2026-09-09',e:'2026-09-15',st:'plan',n:{en:'Finalise workflow & SOP for all parties',th:'สรุป workflow และ SOP ของทุกฝ่าย'}},
+ {g:'prod',id:'2.14',s:'2026-09-09',e:'2026-09-15',st:'plan',n:{en:'Complete development',th:'พัฒนาระบบให้เสร็จสมบูรณ์'},note:{en:'Webapp and mobile prototype at 100%; group companies onboarded',th:'Webapp และ mobile app prototype 100% / onboard บริษัทในเครือ'}},
+ {g:'prod',id:'2.15',s:'2026-09-16',e:'2026-09-22',st:'plan',n:{en:'End-to-end UAT',th:'UAT ตั้งแต่ต้นจนจบ'}},
+ {g:'prod',id:'2.16',s:'2026-09-16',e:'2026-09-22',st:'plan',n:{en:'Integration partner connection',th:'เชื่อมต่อพาร์ทเนอร์'},note:{en:'Partner list on page 05; several already on board',th:'รายชื่ออยู่หน้า 05 หลายรายตอบรับแล้ว'}},
+ {g:'prod',id:'2.17',s:'2026-09-23',e:'2026-09-29',st:'plan',n:{en:'Buffer fix + retest',th:'แก้ buffer + ทดสอบซ้ำ'}},
+ {g:'prod',id:'2.18',s:'2026-09-30',e:'2026-09-30',st:'plan',mile:1,n:{en:'RC + scope freeze',th:'RC + ปิด scope'}},
+ {g:'prod',id:'2.19',s:'2026-10-01',e:'2026-10-01',st:'plan',mile:1,n:{en:'Go / no-go',th:'ตัดสินใจ Go / No-go'}},
+ {g:'prod',id:'2.20',s:'2026-10-02',e:'2026-10-04',st:'plan',n:{en:'Production prep',th:'เตรียม production'}},
+ {g:'prod',id:'2.21',s:'2026-10-05',e:'2026-10-05',st:'plan',mile:1,lab:'launch1',n:{en:'Launch Phase 1',th:'เปิดตัวเฟส 1'},note:{en:'Tasks 1–7, without real-time bank reconciliation',th:'งาน 1–7 ยังไม่รวม reconcile ธนาคารแบบ real-time'}},
+ {g:'prod',id:'2.22',s:'2026-10-05',e:'2026-10-31',st:'tbc',n:{en:'Develop Phase 2 (+ bank API)',th:'พัฒนาเฟส 2 (+ Bank API)'},note:{en:'KBANK, SCB, BBL',th:'KBANK, SCB, BBL'}},
+ {g:'prod',id:'2.23',s:'2026-11-01',e:'2026-11-01',st:'tbc',mile:1,lab:'launch2',n:{en:'Launch Phase 2',th:'เปิดตัวเฟส 2'},note:{en:'Pending confirmation',th:'รอยืนยัน'}},
+
+ {g:'mkt',id:'3.1',s:'2026-08-19',e:'2026-08-31',st:'process',n:{en:'Brief & decision making',th:'Brief และการตัดสินใจ'}},
+ {g:'mkt',id:'3.2',s:'2026-08-19',e:'2026-08-31',st:'process',n:{en:'Agency selection + scope split',th:'คัดเลือก agency + แบ่ง scope'}},
+ {g:'mkt',id:'3.3',s:'2026-09-01',e:'2026-09-30',st:'plan',n:{en:'Finalise marketing plan + production',th:'สรุปแผนการตลาด + ผลิตงาน'},note:{en:'Budget ฿1.5M over four months',th:'งบ ฿1.5M ระยะ 4 เดือน'}},
+ {g:'mkt',id:'3.4',s:'2026-10-05',e:'2026-11-08',st:'plan',open:1,n:{en:'Media rolling & go live',th:'เริ่มลงสื่อและ go live'},note:{en:'Runs past this window',th:'ต่อเนื่องเลยหน้าต่างนี้'}},
+
+ {g:'team',id:'4.1',s:'2026-08-19',e:'2026-09-08',st:'process',n:{en:'Legal review (DBD rep, consent, e-sign, PDPA)',th:'ตรวจกฎหมาย (DBD rep, consent, e-sign, PDPA)'}},
+ {g:'team',id:'4.2',s:'2026-08-19',e:'2026-09-08',st:'process',n:{en:'Finalise Phase 1 partner list + contract drafting',th:'สรุปรายชื่อพาร์ทเนอร์เฟส 1 + ร่างสัญญา'}},
+ {g:'team',id:'4.3',s:'2026-09-09',e:'2026-09-15',st:'plan',n:{en:'Partner engagement / contract co-sign',th:'เจรจาพาร์ทเนอร์ / ลงนามสัญญา'}},
+ {g:'team',id:'4.4',s:'2026-09-16',e:'2026-09-22',st:'plan',n:{en:'Partner onboarding + training + SOP',th:'Onboard พาร์ทเนอร์ + อบรม + SOP'}},
+ {g:'team',id:'4.5',s:'2026-08-15',e:'2026-09-15',st:'process',n:{en:'Hiring (front-line / staff)',th:'รับพนักงาน (front / staff)'}}
+];
+
+const dn=s=>Math.round(Date.parse(s+'T00:00:00Z')/864e5);
+const G0=dn('2026-08-15'), GN=86;
+const GMON=[[8,0,17],[9,17,30],[10,47,31],[11,78,8]];
+const MCAL={en:{8:'Aug',9:'Sep',10:'Oct',11:'Nov'},th:{8:'ส.ค.',9:'ก.ย.',10:'ต.ค.',11:'พ.ย.'}};
+const LAUNCH='2026-10-05';
+const gp=s=>(dn(s)-G0)/GN*100;
+const gw=(s,e)=>(dn(e)-dn(s)+1)/GN*100;
+const dlab=s=>{const d=new Date(s+'T00:00:00Z');return d.getUTCDate()+' '+MCAL[LANG][d.getUTCMonth()+1]};
+const win=x=>!x.s?'—':x.open?dlab(x.s)+' →':(x.s===x.e?dlab(x.s):dlab(x.s)+' – '+dlab(x.e));
+function tdNum(){const d=new Date();return Math.round(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)}
+
+function gRow(x){
+  const c=ST[x.st].c, p=gp(x.s);
+  let inner;
+  if(x.mile){
+    const lab=x.lab?t(x.lab):dlab(x.s);
+    const pos=p>66?`right:${(100-p).toFixed(2)}%;margin-right:13px;text-align:right`:`left:${p.toFixed(2)}%;margin-left:13px`;
+    inner=`<div class="gmile" style="left:${p.toFixed(2)}%;background:${c}"></div>`
+        + `<u class="gmlab" style="${pos};color:${c}">${lab}</u>`;
+  }else{
+    const w=gw(x.s,x.e), pe=p+w;
+    const pos=pe>66?`right:${(100-p).toFixed(2)}%;margin-right:9px;text-align:right`:`left:${pe.toFixed(2)}%;margin-left:9px`;
+    inner=`<div class="gbar" style="left:${p.toFixed(2)}%;width:${w.toFixed(2)}%;background:${c}"></div>`
+        + `<u class="gblab" style="${pos}">${win(x)}</u>`;
+  }
+  return `<div class="grow"><div class="gname"><em>${x.id}</em>${x.n[LANG]}</div><div class="gtrack">${inner}</div></div>`;
+}
+function gGroup(g){
+  const rows=TASKS.filter(x=>x.g===g&&x.s);
+  if(!rows.length) return '';
+  return `<div class="ggroup">${GRP[g][LANG]}</div>`+rows.map(gRow).join('');
+}
+function gSep(){
+  let s=GMON.filter(m=>m[1]>0).map(m=>`<i style="left:${(m[1]/GN*100).toFixed(2)}%"></i>`).join('');
+  const p=(tdNum()-G0)/GN*100;
+  if(p>=0&&p<=100) s+=`<b style="left:${p.toFixed(2)}%"></b><u style="left:${p.toFixed(2)}%">${t('today')}</u>`;
+  return `<div class="gsep">${s}</div>`;
+}
+function gantt(k){
+  let h='';
+  const chips=(k==='all')?TASKS.filter(x=>x.g==='strat'):[];
+  if(chips.length) h+=`<div class="ggroup" style="border-bottom:0">${GRP.strat[LANG]} · ${t('doneBefore')}</div>`
+    +`<div class="chips">${chips.map(x=>`<span class="chip"><i>✓</i>${x.n[LANG]}</span>`).join('')}</div>`;
+  const groups=(k==='all')?['prod','mkt','team']:[k];
+  h+=`<div class="gwrap"><div class="gant">
+    <div class="ghead"><div class="gh1">${t('thTask')}</div>
+      <div class="gmonths">${GMON.map(m=>`<div style="width:${(m[2]/GN*100).toFixed(2)}%">${MCAL[LANG][m[0]]} 26</div>`).join('')}</div></div>
+    <div class="gbody">${gSep()}${groups.map(gGroup).join('')}</div>
+  </div></div>`;
+  return h;
+}
+function tlTable(k){
+  const rows=(k==='all')?TASKS:TASKS.filter(x=>x.g===k);
+  return `<table><thead><tr><th>${t('thTask')}</th><th style="text-align:left">${t('thWindow')}</th>
+    <th style="text-align:left">${t('thStatus')}</th><th style="text-align:left">${t('thNote')}</th></tr></thead><tbody>`
+   + rows.map((x,i)=>`<tr class="${i%2?'zebra':''}">
+      <td><em style="font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-right:9px">${x.id}</em>${x.n[LANG]}</td>
+      <td class="free n">${win(x)}</td>
+      <td class="free"><span class="stat"><i style="background:${ST[x.st].c}"></i>${t(ST[x.st].k)}</span></td>
+      <td class="free">${x.note?x.note[LANG]:'—'}</td></tr>`).join('')
+   + '</tbody></table>';
+}
+function renderTL(k){
+  curTL=k; setAccent('best');
+  const tabs={all:t('tlAllTab'),prod:GRP.prod[LANG],mkt:GRP.mkt[LANG],team:GRP.team[LANG]};
+  document.getElementById('tabs4').innerHTML=Object.keys(tabs).map(j=>
+    `<button class="${j===k?'on':''}" data-t2="${j}"><i></i>${tabs[j]}</button>`).join('');
+  document.getElementById('logic4').innerHTML=`<b>${tabs[k]}</b> — ${TLD[k][LANG]}`;
+
+  const days=dn(LAUNCH)-tdNum();
+  const nd=TASKS.filter(x=>x.st==='done').length, np=TASKS.filter(x=>x.st==='process').length;
+  document.getElementById('kpi4').innerHTML=[
+    [t('kToLaunch'),days>0?days:0,t('uDays')+' · '+dlab(LAUNCH)+' 2026',days>0?'':'pos'],
+    [t('kTasks'),TASKS.length,'',''],
+    [t('kDone'),nd,t('uOf')+' '+TASKS.length,'pos'],
+    [t('kRunning'),np,t('uOf')+' '+TASKS.length,''],
+    [t('kCrit'),PARTNERS.filter(p=>p.crit).length,t('uBy15Sep'),'neg'],
+    [t('kPhase2'),dlab('2026-11-01'),t('uWithBank'),'']
+  ].map(x=>`<div class="kpi"><div class="k">${x[0]}</div><div class="v ${x[3]}">${x[1]}</div><div class="u">${x[2]}</div></div>`).join('');
+
+  document.getElementById('gantt4').innerHTML=gantt(k);
+  document.getElementById('legend4').innerHTML=['done','process','plan','tbc']
+    .map(s=>`<span><i style="background:${ST[s].c}"></i>${t(ST[s].k)}</span>`).join('')
+    +`<span><i style="background:var(--neg);height:1px"></i>${t('today')}</span>`;
+  document.getElementById('tltable').innerHTML=tlTable(k);
+}
+
+/* ================= 05 partners ================= */
+const PCAT={gov:{en:'Government',th:'ภาครัฐ'},fin:{en:'Financial',th:'การเงิน'},
+  svc:{en:'Service',th:'บริการ'},erp:{en:'ERP',th:'ERP'},ch:{en:'Channel',th:'ช่องทาง'},
+  mkp:{en:'Marketplace',th:'มาร์เก็ตเพลส'},hr:{en:'HR',th:'HR'}};
+
+const PARTNERS=[
+ {id:1,c:'gov',crit:1,st:'plan',s:'2026-09-08',e:'2026-09-15',
+  n:{en:'DBD',th:'DBD (กรมพัฒนาธุรกิจการค้า)'},
+  a:{en:'Registration rep account + automation script',th:'บัญชีตัวแทนจดทะเบียน + automation script'},
+  note:{en:'Filed through a ThuraGirl account with scripts, not a direct API',th:'ยื่นผ่านบัญชี TG ด้วยสคริปต์ ไม่ได้เชื่อม API'}},
+ {id:2,c:'gov',crit:0,st:'wait',
+  n:{en:'SSO',th:'SSO (ประกันสังคม)'},
+  a:{en:'Delegated access',th:'สิทธิ์ delegated access'},
+  note:{en:'Waiting on delegated access; filed through a ThuraGirl account meanwhile',th:'รอสิทธิ์ delegated access ระหว่างนี้ยื่นผ่านบัญชี TG'}},
+ {id:3,c:'gov',crit:0,st:'wait',
+  n:{en:'Revenue Department',th:'กรมสรรพากร'},
+  a:{en:'Official RD API partner status',th:'สถานะพาร์ทเนอร์ API ของสรรพากร'},
+  note:{en:'Filed through a ThuraGirl account with tax agents until API partnership is granted',th:'ยื่นผ่านบัญชี TG ร่วมกับ tax agent จนกว่าจะได้สถานะพาร์ทเนอร์ API'}},
+ {id:4,c:'fin',crit:0,st:'process',s:'2026-08-10',e:'2026-10-31',
+  n:{en:'KBANK',th:'KBANK'},a:{en:'Statement / reconciliation',th:'Statement / reconcile'},
+  note:{en:'Post-launch, Phase 2',th:'หลังเปิดตัว เฟส 2'}},
+ {id:5,c:'fin',crit:0,st:'process',s:'2026-08-11',e:'2026-10-31',
+  n:{en:'SCB',th:'SCB'},a:{en:'Statement / reconciliation',th:'Statement / reconcile'},
+  note:{en:'Post-launch, Phase 2',th:'หลังเปิดตัว เฟส 2'}},
+ {id:6,c:'fin',crit:0,st:'not',e:'2026-10-31',
+  n:{en:'BBL',th:'BBL'},a:{en:'Statement / reconciliation',th:'Statement / reconcile'},
+  note:{en:'Post-launch, Phase 2; not yet engaged',th:'หลังเปิดตัว เฟส 2 ยังไม่ได้เริ่มคุย'}},
+ {id:7,c:'svc',crit:1,st:'process',s:'2026-08-20',e:'2026-09-08',
+  n:{en:'Tax agent',th:'ตัวแทนยื่นภาษี'},a:{en:'Commercial terms + filing SLA',th:'เงื่อนไขทางการค้า + SLA การยื่น'},
+  note:{en:'Affects cost of sales; ThuraGirl uses credentials only',th:'กระทบต้นทุนขาย ขอใช้แค่ credential'}},
+ {id:8,c:'svc',crit:1,st:'process',s:'2026-08-20',e:'2026-09-08',
+  n:{en:'Audit firm',th:'สำนักงานสอบบัญชี'},a:{en:'Commercial terms + filing SLA',th:'เงื่อนไขทางการค้า + SLA การยื่น'},
+  note:{en:'Affects cost of sales; monthly capacity to be stated',th:'กระทบต้นทุนขาย ต้องระบุ capacity ต่อเดือน'}},
+ {id:9,c:'erp',crit:0,st:'done',n:{en:'PEAK',th:'PEAK'},a:{en:'API access + commercial',th:'สิทธิ์ API + เงื่อนไขการค้า'}},
+ {id:10,c:'erp',crit:0,st:'done',n:{en:'FlowAccount',th:'FlowAccount'},a:{en:'API access + commercial',th:'สิทธิ์ API + เงื่อนไขการค้า'}},
+ {id:11,c:'erp',crit:0,st:'done',n:{en:'Odoo',th:'Odoo'},a:{en:'API access + commercial',th:'สิทธิ์ API + เงื่อนไขการค้า'}},
+ {id:12,c:'ch',crit:0,st:'done',n:{en:'LINE OA',th:'LINE OA'},a:{en:'Verified OA + API',th:'ยืนยัน OA + API'}},
+ {id:13,c:'mkp',crit:0,st:'done',n:{en:'Shopee, Lazada',th:'Shopee, Lazada'},a:{en:'Sales data feed',th:'ดึงข้อมูลยอดขาย'}},
+ {id:14,c:'mkp',crit:0,st:'done',n:{en:'TikTok Shop',th:'TikTok Shop'},a:{en:'Sales data feed',th:'ดึงข้อมูลยอดขาย'}},
+ {id:15,c:'hr',crit:0,st:'not',n:{en:'HumanSoft',th:'HumanSoft'},a:{en:'SSO + employee data',th:'SSO + ข้อมูลพนักงาน'}},
+ {id:16,c:'hr',crit:0,st:'not',n:{en:'Empeo',th:'Empeo'},a:{en:'SSO + employee data',th:'SSO + ข้อมูลพนักงาน'}}
+];
+const pwin=p=>p.s&&p.e?dlab(p.s)+' – '+dlab(p.e):p.e?'→ '+dlab(p.e):'—';
+
+function renderP(k){
+  curP=k; setAccent('best');
+  const tabs={all:[t('fAll'),t('fAllCap')],crit:[t('fCrit'),t('fCritCap')],
+              open:[t('fOpen'),t('fOpenCap')],done:[t('fDone'),t('fDoneCap')]};
+  document.getElementById('tabs5').innerHTML=Object.keys(tabs).map(j=>
+    `<button class="${j===k?'on':''}" data-t3="${j}"><i></i>${tabs[j][0]}</button>`).join('');
+  document.getElementById('logic5').innerHTML=`<b>${tabs[k][0]}</b> — ${tabs[k][1]}`;
+
+  const n=s=>PARTNERS.filter(p=>p.st===s).length;
+  document.getElementById('kpi5').innerHTML=[
+    [t('kPartners'),PARTNERS.length,t('uCategories'),''],
+    [t('kConnected'),n('done'),t('uApiLive'),'pos'],
+    [t('kInProg'),n('process'),t('uContract'),''],
+    [t('kCrit'),PARTNERS.filter(p=>p.crit).length,t('uBy15Sep'),'neg'],
+    [t('stWait'),n('wait'),t('uContract'),''],
+    [t('kNotStart'),n('not'),t('uNoContact'),'']
+  ].map(x=>`<div class="kpi"><div class="k">${x[0]}</div><div class="v ${x[3]}">${x[1]}</div><div class="u">${x[2]}</div></div>`).join('');
+
+  const rows=PARTNERS.filter(p=>k==='all'||(k==='crit'&&p.crit)||(k==='done'&&p.st==='done')||(k==='open'&&p.st!=='done'));
+  document.getElementById('ptable').innerHTML= rows.length
+   ? `<table><thead><tr><th>${t('thPartner')}</th><th style="text-align:left">${t('thCat')}</th>
+      <th style="text-align:left">${t('thAction')}</th><th style="text-align:left">${t('thWindow')}</th>
+      <th style="text-align:left">${t('thCrit')}</th><th style="text-align:left">${t('thStatus')}</th>
+      <th style="text-align:left">${t('thNote')}</th></tr></thead><tbody>`
+     + rows.map((p,i)=>`<tr class="${i%2?'zebra':''}">
+        <td><em style="font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-right:9px">${String(p.id).padStart(2,'0')}</em>${p.n[LANG]}</td>
+        <td class="free">${PCAT[p.c][LANG]}</td>
+        <td class="free">${p.a[LANG]}</td>
+        <td class="free n">${pwin(p)}</td>
+        <td class="free">${p.crit?`<span class="crit">${t('yes')}</span>`:'—'}</td>
+        <td class="free"><span class="stat"><i style="background:${ST[p.st].c}"></i>${t(ST[p.st].k)}</span></td>
+        <td class="free">${p.note?p.note[LANG]:'—'}</td></tr>`).join('')
+     + '</tbody></table>'
+   : `<div class="cap" style="padding:14px 0">${t('noRows')}</div>`;
+
+  document.getElementById('legend5').innerHTML=['done','process','plan','wait','not']
+    .map(s=>`<span><i style="background:${ST[s].c}"></i>${t(ST[s].k)}</span>`).join('');
+}
+
+/* ================= 06 brand strategy ================= */
+const PAL=[['#0FBFB6','Teal','เทียล'],['#0AA39B','Deep teal','เทียลเข้ม'],
+           ['#EC4899','Blossom','ชมพูดอกไม้'],['#0A0A0A','Ink','ดำหมึก'],['#F6F1E7','Comfort','ครีมอุ่น']];
+const BR={
+ found:{n:{en:'Brand foundation',th:'ฐานของแบรนด์'},d:null},
+ prob :{n:{en:'The problem',th:'ปัญหา'},
+        d:{en:'Nine jobs that come back every month, and what each one costs the owner today. The whole product argument sits here.',
+           th:'งาน 9 อย่างที่วนกลับมาทุกเดือน และวันนี้แต่ละอย่างกินเวลาเจ้าของธุรกิจแค่ไหน เหตุผลของสินค้าทั้งหมดอยู่ตรงนี้'}},
+ prod :{n:{en:'Product & experience',th:'สินค้าและประสบการณ์'},
+        d:{en:'Four pillars, seven jobs, and what a month actually looks like from the owner\u2019s side.',
+           th:'เสาหลัก 4 ข้อ งาน 7 อย่าง และหนึ่งเดือนในมุมของเจ้าของธุรกิจจริงๆ เป็นอย่างไร'}},
+ aud  :{n:{en:'Audience & price',th:'กลุ่มเป้าหมายและราคา'},
+        d:{en:'Who we go after and in what order, and why ฿1,999 reads as cheap against what they already pay.',
+           th:'เราไล่จับใครก่อนหลัง และทำไม ฿1,999 ถึงดูถูกเมื่อเทียบกับที่เขาจ่ายอยู่แล้ว'}},
+ voice:{n:{en:'Voice & identity',th:'น้ำเสียงและอัตลักษณ์'},
+        d:{en:'How she speaks, how she looks, and how we answer each competitor.',
+           th:'เธอพูดอย่างไร หน้าตาเป็นอย่างไร และเราตอบคู่แข่งแต่ละรายอย่างไร'}}
+};
+
+const JOBS9=[
+ [{en:'Pull sales off every channel',th:'ดึงยอดขายจากทุกช่องทาง'},{en:'Downloads Shopee, Lazada and TikTok, then re-keys it',th:'โหลดจาก Shopee, Lazada, TikTok แล้วคีย์ใหม่'},{en:'Pulled in daily, on its own',th:'ดึงเข้าทุกวันโดยอัตโนมัติ'}],
+ [{en:'Issue a receipt and tax invoice per order',th:'ออกใบเสร็จและใบกำกับภาษีต่อออร์เดอร์'},{en:'Made one at a time, by hand',th:'ทำทีละใบด้วยมือ'},{en:'Issued per order, automatically',th:'ออกให้อัตโนมัติทุกออร์เดอร์'}],
+ [{en:'Match the bank against the sales',th:'กระทบยอดธนาคารกับยอดขาย'},{en:'Matched by eye; books end up a month late',th:'ไล่ดูด้วยตา บัญชีช้าไปเป็นเดือน'},{en:'Matched daily, flagged when it doesn\u2019t tie',th:'กระทบยอดทุกวัน ไม่ตรงเมื่อไหร่แจ้งทันที'}],
+ [{en:'Read supplier bills, check VAT and withholding',th:'อ่านบิลผู้ขาย ตรวจ VAT และภาษีหัก ณ ที่จ่าย'},{en:'Typed into Excel, rate checked from memory',th:'พิมพ์ลง Excel เช็กอัตราจากความจำ'},{en:'Read in chat and flagged if the rate is wrong',th:'อ่านในแชท และเตือนถ้าอัตราผิด'}],
+ [{en:'Issue withholding certificates',th:'ออกหนังสือรับรองหัก ณ ที่จ่าย'},{en:'100+ written by hand and couriered out',th:'เขียนมือ 100+ ใบ แล้วส่งเมสเซนเจอร์'},{en:'Generated and emailed to the supplier',th:'ออกให้และส่งอีเมลถึงผู้ขาย'}],
+ [{en:'Run payroll, social security and ภ.ง.ด.1',th:'ทำเงินเดือน ประกันสังคม และ ภ.ง.ด.1'},{en:'Spreadsheet, then filed manually',th:'ทำใน spreadsheet แล้วยื่นเอง'},{en:'Calculated, slips drafted, file ready',th:'คำนวณให้ ร่างสลิป ไฟล์พร้อมยื่น'}],
+ [{en:'File VAT and withholding',th:'ยื่น VAT และภาษีหัก ณ ที่จ่าย'},{en:'Wait for the firm, then go and pay it yourself',th:'รอสำนักงานบัญชี แล้วไปจ่ายเอง'},{en:'Prepared and submitted; you release the payment',th:'เตรียมและยื่นให้ เหลือแค่กดจ่าย'}],
+ [{en:'Collate it all and send it to the firm',th:'รวบรวมเอกสารส่งสำนักงานบัญชี'},{en:'Days of printing, sorting and couriering',th:'ปรินต์ จัดเรียง ส่งของ หลายวัน'},{en:'Nothing to send \u2014 it is already done',th:'ไม่ต้องส่งอะไรเลย เพราะทำเสร็จแล้ว'}],
+ [{en:'Close the year and get it signed',th:'ปิดปีและหาคนเซ็นรับรอง'},{en:'Find an auditor, negotiate a fee, wait',th:'หาผู้สอบบัญชี ต่อรองค่าบริการ แล้วรอ'},{en:'A licensed auditor signs inside the app',th:'ผู้สอบบัญชีที่มีใบอนุญาตเซ็นในแอป'}]
+];
+const JOBS7=[
+ ['01',{en:'Register the company',th:'จดทะเบียนบริษัท'},{en:'Name reservation, forms, e-signature, VAT and social security \u2014 all with DBD online. Free.',th:'จองชื่อ แบบฟอร์ม ลายเซ็นอิเล็กทรอนิกส์ VAT และประกันสังคม ครบผ่าน DBD ออนไลน์ ฟรี'}],
+ ['02',{en:'Track every sale',th:'ตามทุกยอดขาย'},{en:'Pulls Shopee, Lazada, TikTok, the ERP and the bank, and flags when money in doesn\u2019t match sales.',th:'ดึงจาก Shopee, Lazada, TikTok, ERP และธนาคาร แล้วเตือนเมื่อเงินเข้าไม่ตรงยอดขาย'}],
+ ['03',{en:'Prepare the tax',th:'เตรียมภาษี'},{en:'VAT and withholding calculated from your own records, prepared and submitted. You release the payment.',th:'คำนวณ VAT และภาษีหัก ณ ที่จ่ายจากข้อมูลของคุณเอง เตรียมและยื่นให้ เหลือแค่กดจ่าย'}],
+ ['04',{en:'Handle the bills',th:'จัดการบิล'},{en:'Photograph a supplier invoice in chat. It is read, the withholding rate is checked, the certificate is issued.',th:'ถ่ายรูปบิลผู้ขายในแชท ระบบอ่านให้ ตรวจอัตราหัก ณ ที่จ่าย และออกหนังสือรับรองให้'}],
+ ['05',{en:'Issue the documents',th:'ออกเอกสาร'},{en:'Quotations, invoices, receipts and POs by chat \u2014 sent to the customer by email or LINE.',th:'ใบเสนอราคา ใบแจ้งหนี้ ใบเสร็จ และใบสั่งซื้อ สั่งผ่านแชท ส่งถึงลูกค้าทางอีเมลหรือ LINE'}],
+ ['06',{en:'Run the payroll',th:'ทำเงินเดือน'},{en:'Salaries, payslips, ภ.ง.ด.1 and the social security file, every month, without a spreadsheet.',th:'เงินเดือน สลิป ภ.ง.ด.1 และไฟล์ประกันสังคม ทุกเดือน โดยไม่ต้องใช้ spreadsheet'}],
+ ['07',{en:'Close the year',th:'ปิดงบปี'},{en:'A licensed auditor takes the job inside the app and signs the annual accounts. Included.',th:'ผู้สอบบัญชีที่มีใบอนุญาตรับงานในแอปและเซ็นงบประจำปี รวมอยู่ในแพ็กเกจแล้ว'}]
+];
+const EXP=[
+ [{en:'As it happens \u00b7 day to day',th:'เกิดขึ้นเมื่อไหร่ก็ทำเมื่อนั้น \u00b7 รายวัน'},[
+   [{en:'A supplier bill arrives',th:'บิลจากผู้ขายเข้ามา'},{en:'Read, checked, recorded. Certificate sent back to the supplier.',th:'อ่าน ตรวจ บันทึก แล้วส่งหนังสือรับรองกลับให้ผู้ขาย'},{en:'Take a photo',th:'ถ่ายรูป'}],
+   [{en:'A sale comes in on Shopee',th:'มียอดขายเข้าทาง Shopee'},{en:'Pulled in, tax invoice issued, cash matched to the order.',th:'ดึงเข้า ออกใบกำกับภาษี และกระทบเงินกับออร์เดอร์'},{en:'Nothing',th:'ไม่ต้องทำอะไร'}],
+   [{en:'A customer wants a quote',th:'ลูกค้าขอใบเสนอราคา'},{en:'Written and sent by email or LINE from your customer list.',th:'เขียนและส่งทางอีเมลหรือ LINE จากรายชื่อลูกค้าของคุณ'},{en:'Ask in chat',th:'สั่งในแชท'}]]],
+ [{en:'Month end \u00b7 once a month',th:'สิ้นเดือน \u00b7 เดือนละครั้ง'},[
+   [{en:'Payroll and social security',th:'เงินเดือนและประกันสังคม'},{en:'Salaries, slips and the SSO file all drafted and staged.',th:'เงินเดือน สลิป และไฟล์ประกันสังคม ร่างและเตรียมไว้พร้อม'},{en:'Approve \u00b7 release',th:'อนุมัติ \u00b7 สั่งจ่าย'}],
+   [{en:'VAT and withholding',th:'VAT และภาษีหัก ณ ที่จ่าย'},{en:'Calculated from your records, prepared and submitted for you.',th:'คำนวณจากข้อมูลของคุณ เตรียมและยื่นให้'},{en:'Approve \u00b7 pay',th:'อนุมัติ \u00b7 จ่าย'}],
+   [{en:'The books close',th:'ปิดบัญชีเดือน'},{en:'Nothing to collate. Nothing to courier to anyone.',th:'ไม่ต้องรวบรวมเอกสาร ไม่ต้องส่งให้ใคร'},{en:'Nothing',th:'ไม่ต้องทำอะไร'}]]],
+ [{en:'Year end \u00b7 once a year',th:'สิ้นปี \u00b7 ปีละครั้ง'},[
+   [{en:'The annual accounts',th:'งบการเงินประจำปี'},{en:'A licensed auditor takes the job inside the app and signs.',th:'ผู้สอบบัญชีที่มีใบอนุญาตรับงานในแอปแล้วเซ็นให้'},{en:'Approve',th:'อนุมัติ'}]]]
+];
+const ORD=[
+ [{en:'First',th:'กลุ่มแรก'},{en:'Online sellers and creators',th:'ผู้ขายออนไลน์และครีเอเตอร์'},{en:'1\u20135 people \u00b7 already paying an outside firm',th:'1\u20135 คน \u00b7 จ่ายสำนักงานบัญชีข้างนอกอยู่แล้ว'}],
+ [{en:'Next',th:'กลุ่มถัดไป'},{en:'Small companies with an admin',th:'บริษัทเล็กที่มีธุรการ'},{en:'5\u201320 people \u00b7 an admin types the books, then sends them out',th:'5\u201320 คน \u00b7 ธุรการคีย์บัญชีเองแล้วส่งออกไปข้างนอก'}],
+ [{en:'Later',th:'กลุ่มหลัง'},{en:'Freelancers registering',th:'ฟรีแลนซ์ที่กำลังจดทะเบียน'},{en:'No company yet, or registered this year',th:'ยังไม่มีบริษัท หรือเพิ่งจดปีนี้'}]
+];
+const STACK=[
+ [{en:'The bookkeeper',th:'ผู้ทำบัญชี'},{en:'Records and closes the month',th:'บันทึกและปิดบัญชีรายเดือน'},'฿36,000–96,000 / yr'],
+ [{en:'The auditor',th:'ผู้สอบบัญชี'},{en:'The only one who can sign',th:'คนเดียวที่เซ็นรับรองได้'},'฿20,000–40,000 / yr'],
+ [{en:'Registering the company',th:'จดทะเบียนบริษัท'},{en:'One-off, at the start',th:'จ่ายครั้งเดียวตอนเริ่ม'},'฿6,500–20,000']
+];
+
+function brTable(h,rows){
+  return `<div class="tw"><table><thead><tr>${h.map((x,i)=>`<th${i?' style="text-align:left"':''}>${x}</th>`).join('')}</tr></thead><tbody>`
+   + rows.map((r,i)=>`<tr class="${i%2?'zebra':''}"><td>${r[0]}</td>${r.slice(1).map(c=>`<td class="free">${c}</td>`).join('')}</tr>`).join('')
+   + '</tbody></table></div>';
+}
+function brandHTML(k){
+  const L=LANG, EN=L==='en';
+  const sw=`<div class="swatches">${PAL.map(p=>
+    `<div class="sw"><b style="background:${p[0]}"></b><em>${EN?p[1]:p[2]}</em>${p[0]}</div>`).join('')}</div>`;
+
+  if(k==='found') return EN?`
+   <h2><em>01</em>Positioning</h2>
+   <div class="pull"><strong>ThuraGirl is not accounting software — she is staff.</strong> An AI employee who runs the books, taxes, invoices and payroll through a simple conversation, so owners stay out front where the business actually happens. Software gives you tools. ThuraGirl does the work.</div>
+   <p>The name reads <strong>ธุระ + girl</strong> — the girl who handles your business. The owner never operates software; they approve what she has already done.</p>
+   <h2><em>02</em>The insight</h2>
+   <p><strong>They don't want tools. They want it handled.</strong> Thai SME owners run the business from their phone and in LINE, not in dashboards. Compliance anxiety is constant and personal, so trust has to be personal too. That is why the product is a she, not a system.</p>
+   <p><strong>Why the category leaves room.</strong> Every competitor speaks grey software language — engines, ledgers, modules. ThuraGirl speaks like a capable colleague who has already done the work and just needs a nod.</p>
+   <h2><em>03</em>Mission &amp; vision</h2>
+   <p><strong>Mission.</strong> Free Thailand's three million micro-SMEs from paperwork by giving every one of them an AI employee who handles the rest, at the price of a staff meal, not a staff salary.</p>
+   <p><strong>Vision.</strong> A Thailand where running a small business requires zero accounting knowledge: compliance, cash and payroll simply happen — correctly, on time, in the owner's own language.</p>
+   <h2><em>04</em>Differentiators</h2>
+   <ul class="tick">
+     <li>Does-it-for-you, not do-it-yourself</li>
+     <li>Chat plus one-tap approve as the entire workflow</li>
+     <li>Native Thai compliance: DBD, TRD, SSO, ภ.พ. / ภ.ง.ด. forms</li>
+     <li>A warm, mascot-led brand in a category of grey dashboards</li>
+     <li>Truly bilingual — every string, every name, in both languages</li>
+   </ul>
+   <div class="pull">Brand book and brand strategy are marked <strong>done</strong> in the execution timeline (task 1.4). This page is the frame agencies build proposals against; the brief itself sits in section 07.</div>`:`
+   <h2><em>01</em>การวางตำแหน่งแบรนด์</h2>
+   <div class="pull"><strong>ThuraGirl ไม่ใช่โปรแกรมบัญชี แต่เป็น "พนักงาน"</strong> พนักงาน AI ที่ดูแลบัญชี ภาษี ใบแจ้งหนี้ และเงินเดือน ผ่านการคุยแบบธรรมดา เพื่อให้เจ้าของธุรกิจได้อยู่หน้าร้านซึ่งเป็นที่ที่ธุรกิจเกิดขึ้นจริง โปรแกรมให้เครื่องมือ ThuraGirl ลงมือทำให้</div>
+   <p>ชื่ออ่านว่า <strong>ธุระ + girl</strong> คือผู้หญิงที่จัดการธุระให้คุณ เจ้าของธุรกิจไม่ต้องใช้โปรแกรมเลย แค่กดอนุมัติสิ่งที่เธอทำเสร็จไว้แล้ว</p>
+   <h2><em>02</em>Insight</h2>
+   <p><strong>เขาไม่ได้อยากได้เครื่องมือ เขาอยากให้มีคนจัดการให้</strong> เจ้าของ SME ไทยบริหารธุรกิจจากมือถือและ LINE ไม่ได้อยู่บน dashboard ความกังวลเรื่องภาษีเป็นเรื่องต่อเนื่องและเป็นเรื่องส่วนตัว ความไว้ใจจึงต้องเป็นเรื่องส่วนตัวด้วย นี่คือเหตุผลที่สินค้านี้เป็น "เธอ" ไม่ใช่ "ระบบ"</p>
+   <p><strong>ทำไมหมวดนี้ยังมีที่ว่าง</strong> คู่แข่งทุกรายพูดภาษาซอฟต์แวร์สีเทา ทั้ง engine ledger module ส่วน ThuraGirl พูดเหมือนเพื่อนร่วมงานที่เก่ง ทำงานเสร็จแล้ว และรอแค่คุณพยักหน้า</p>
+   <h2><em>03</em>พันธกิจและวิสัยทัศน์</h2>
+   <p><strong>พันธกิจ</strong> ปลดล็อกไมโคร SME สามล้านรายของไทยจากงานเอกสาร ด้วยการให้ทุกรายมีพนักงาน AI ที่จัดการเรื่องที่เหลือให้ ในราคาเท่าค่าข้าวพนักงาน ไม่ใช่เงินเดือนพนักงาน</p>
+   <p><strong>วิสัยทัศน์</strong> ประเทศไทยที่การทำธุรกิจเล็กไม่ต้องใช้ความรู้บัญชีเลย เรื่องภาษี เงินสด และเงินเดือนเกิดขึ้นเอง ถูกต้อง ตรงเวลา และเป็นภาษาของเจ้าของกิจการ</p>
+   <h2><em>04</em>จุดต่าง</h2>
+   <ul class="tick">
+     <li>ทำให้เสร็จ ไม่ใช่ให้ทำเอง</li>
+     <li>แชทบวกอนุมัติแตะเดียว คือ workflow ทั้งหมด</li>
+     <li>รองรับกฎเกณฑ์ไทยจริง ทั้ง DBD สรรพากร ประกันสังคม และแบบ ภ.พ. / ภ.ง.ด.</li>
+     <li>แบรนด์อบอุ่นที่มีมาสคอตนำ ในหมวดที่เต็มไปด้วย dashboard สีเทา</li>
+     <li>สองภาษาจริง ทุกข้อความ ทุกชื่อ ครบทั้งสองภาษา</li>
+   </ul>
+   <div class="pull">Brand book และกลยุทธ์แบรนด์ขึ้นสถานะ <strong>เสร็จแล้ว</strong> ใน timeline (งาน 1.4) หน้านี้คือกรอบที่ agency ใช้ตั้งข้อเสนอ ส่วนตัวบรีฟอยู่ในหน้า 07</div>`;
+
+  if(k==='prob') return `
+   <h2><em>01</em>${EN?'The same list comes back every month':'รายการเดิมวนกลับมาทุกเดือน'}</h2>
+   <p>${EN?'Nine jobs, every month, for every registered company. Today they take days of manual work and two or three providers to pay. This table is the argument — the product is not a feature list, it is this column moving from left to right.'
+          :'งาน 9 อย่าง ทุกเดือน ของทุกบริษัทที่จดทะเบียน วันนี้ต้องใช้เวลาทำมือหลายวันและจ่ายผู้ให้บริการสองสามราย ตารางนี้คือเหตุผลทั้งหมด สินค้าไม่ใช่รายการฟีเจอร์ แต่คือการย้ายคอลัมน์จากซ้ายไปขวา'}</p>
+   ${brTable([EN?'Every month, someone has to':'ทุกเดือน ต้องมีคนทำ',EN?'Today':'วันนี้',EN?'With ThuraGirl':'กับ ThuraGirl'],
+     JOBS9.map(r=>[r[0][L],`<span style="color:var(--neg)">${r[1][L]}</span>`,r[2][L]]))}
+   <div class="pull">${EN?'<strong>Today:</strong> days of manual work and several providers to pay. <strong>With ThuraGirl:</strong> minutes, one subscription, nothing to hand over. She does all nine.'
+                        :'<strong>วันนี้</strong> ทำมือหลายวันและจ่ายผู้ให้บริการหลายราย <strong>กับ ThuraGirl</strong> ใช้เวลาไม่กี่นาที จ่ายค่าสมาชิกก้อนเดียว ไม่ต้องส่งเอกสารให้ใคร เธอทำครบทั้ง 9 อย่าง'}</div>`;
+
+  if(k==='prod'){
+    const pillars=[
+     ['1',{en:'Chat is the interface',th:'แชทคือหน้าจอ'},{en:'Ask anything about money, taxes or customers; approve with one tap. Every task card opens a conversation with the full context pinned.',th:'ถามได้ทุกเรื่องทั้งเงิน ภาษี ลูกค้า แล้วอนุมัติด้วยการแตะครั้งเดียว ทุกการ์ดงานเปิดเป็นบทสนทนาที่มี context ครบ'}],
+     ['2',{en:'Taxes on autopilot',th:'ภาษีทำงานอัตโนมัติ'},{en:'Monthly ภ.พ.30, ภ.ง.ด.1, ภ.ง.ด.3 and social security prepared as one bundle — a single sign-off covers all four. DBD filings drafted and submitted.',th:'ภ.พ.30 ภ.ง.ด.1 ภ.ง.ด.3 และประกันสังคม เตรียมเป็นชุดเดียว เซ็นครั้งเดียวครบทั้งสี่ พร้อมร่างและยื่นงาน DBD'}],
+     ['3',{en:'Money at a glance',th:'เห็นเงินในพริบตา'},{en:'Cash, receivables, payables and payroll in plain language with big, honest numbers. The important figure always reads first.',th:'เงินสด ลูกหนี้ เจ้าหนี้ และเงินเดือน เล่าเป็นภาษาคนพร้อมตัวเลขใหญ่และตรงไปตรงมา ตัวเลขสำคัญอ่านได้ก่อนเสมอ'}],
+     ['4',{en:'Everything filed',th:'เอกสารครบทุกใบ'},{en:'Receipts photographed in chat are read, categorised and posted. Statutory documents live in a permission-gated company vault — always audit-ready.',th:'ถ่ายใบเสร็จในแชท ระบบอ่าน จัดหมวด และบันทึกให้ เอกสารตามกฎหมายเก็บใน vault ที่กำหนดสิทธิ์ได้ พร้อมให้ตรวจสอบตลอด'}]
+    ];
+    return `
+   <h2><em>01</em>${EN?'Four pillars, one conversation':'เสาหลัก 4 ข้อ ในบทสนทนาเดียว'}</h2>
+   <p>${EN?'The owner never operates software. They approve what she has already done.':'เจ้าของธุรกิจไม่ต้องใช้โปรแกรมเลย แค่กดอนุมัติสิ่งที่เธอทำเสร็จไว้แล้ว'}</p>
+   ${brTable([EN?'Pillar':'เสาหลัก',EN?'What it means':'ความหมาย'],pillars.map(p=>[`${p[0]} · ${p[1][L]}`,p[2][L]]))}
+   <h2><em>02</em>${EN?'Seven jobs, one subscription':'งาน 7 อย่าง ค่าสมาชิกก้อนเดียว'}</h2>
+   ${brTable([EN?'Job':'งาน',EN?'What she does':'เธอทำอะไร'],JOBS7.map(j=>[`<em style="font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-right:9px">${j[0]}</em>${j[1][L]}`,j[2][L]]))}
+   <div class="pull">${EN?'Plans differ only by volume — <strong>never by what she can do for you.</strong>':'แพ็กเกจต่างกันแค่ปริมาณเอกสาร <strong>ไม่ได้ต่างกันที่ว่าเธอทำอะไรให้ได้บ้าง</strong>'}</div>
+   <h2><em>03</em>${EN?'A month, from the owner\u2019s side':'หนึ่งเดือนในมุมของเจ้าของธุรกิจ'}</h2>
+   <p>${EN?'Everything below happens. The owner is involved a handful of times.':'ทุกอย่างข้างล่างนี้เกิดขึ้นจริง แต่เจ้าของธุรกิจเข้ามาเกี่ยวแค่ไม่กี่ครั้ง'}</p>
+   <div class="tw"><table><thead><tr><th>${EN?'When':'เมื่อไหร่'}</th><th style="text-align:left">${EN?'What happens':'เกิดอะไรขึ้น'}</th><th style="text-align:left">${EN?'What she does':'เธอทำอะไร'}</th><th style="text-align:left">${EN?'Owner does':'เจ้าของทำอะไร'}</th></tr></thead><tbody>
+   ${EXP.map(g=>`<tr class="head"><td colspan="4">${g[0][L]}</td></tr>`
+      +g[1].map(r=>`<tr class="sub"><td></td><td class="free">${r[0][L]}</td><td class="free">${r[1][L]}</td><td class="free"><b>${r[2][L]}</b></td></tr>`).join('')).join('')}
+   </tbody></table></div>
+   <div class="pull">${EN?'The owner\u2019s whole job: <strong>chat, upload, approve, pay.</strong>':'งานทั้งหมดของเจ้าของธุรกิจคือ <strong>แชท อัปโหลด อนุมัติ จ่าย</strong>'}</div>`;
+  }
+
+  if(k==='aud') return `
+   <h2><em>01</em>${EN?'The market':'ขนาดตลาด'}</h2>
+   <div class="kpis" style="margin:14px 0 6px">
+     <div class="kpi"><div class="k">${EN?'Registered with DBD':'จดทะเบียนกับ DBD'}</div><div class="v">967,000</div><div class="u">${EN?'active companies':'นิติบุคคลที่ยัง active'}</div></div>
+     <div class="kpi"><div class="k">${EN?'Fit the profile':'ตรงกับกลุ่มเป้าหมาย'}</div><div class="v pos">430,000</div><div class="u">${EN?'target market':'ตลาดเป้าหมาย'}</div></div>
+     <div class="kpi"><div class="k">${EN?'Back-office spend':'ค่าใช้จ่ายหลังบ้าน'}</div><div class="v">฿10k–250k</div><div class="u">${EN?'per company, per year':'ต่อบริษัทต่อปี'}</div></div>
+   </div>
+   <p>${EN?'The 430,000 here is the same target market as section 01 — the brand deck states the number, the model shows the filter that produces it.'
+          :'ตัวเลข 430,000 นี้คือตลาดเป้าหมายชุดเดียวกับหน้า 01 เดคแบรนด์บอกตัวเลข ส่วนโมเดลแสดงขั้นตอนการกรองที่ได้ตัวเลขนี้มา'}</p>
+   <h2><em>02</em>${EN?'Who she\u2019s for':'กลุ่มเป้าหมาย'}</h2>
+   <p><strong>${EN?'Primary.':'กลุ่มหลัก'}</strong> ${EN?'Owner-operators, roughly 25–45. 1–20 employees, ฿300k–5M monthly revenue. Mobile-first, LINE-first. Today they run on shoebox receipts, a freelance accountant they barely hear from, and low-grade tax anxiety.'
+        :'เจ้าของที่ลงมือทำเอง อายุราว 25–45 ปี พนักงาน 1–20 คน รายได้ ฿300k–5M ต่อเดือน ใช้มือถือและ LINE เป็นหลัก ทุกวันนี้อยู่กับใบเสร็จในกล่อง นักบัญชีฟรีแลนซ์ที่แทบไม่ได้คุย และความกังวลเรื่องภาษีที่ค้างอยู่ตลอด'}</p>
+   <div>${(EN?['Restaurants','Retail &amp; online','Craft studios','Service agencies','Accountants']
+             :['ร้านอาหาร','ค้าปลีกและออนไลน์','งานคราฟต์','เอเจนซีบริการ','นักบัญชี']).map(x=>`<span class="pill">${x}</span>`).join('')}</div>
+   <p><strong>${EN?'Secondary.':'กลุ่มรอง'}</strong> ${EN?'The freelance accountants themselves, who could serve triple the clients with her doing the preparation. <strong>Not a competitor — a channel.</strong>'
+        :'นักบัญชีฟรีแลนซ์เอง ซึ่งจะรับลูกค้าได้มากขึ้นสามเท่าถ้ามีเธอเตรียมงานให้ <strong>ไม่ใช่คู่แข่ง แต่เป็นช่องทาง</strong>'}</p>
+   <h2><em>03</em>${EN?'The order we go after them':'ลำดับที่เราจะไล่จับ'}</h2>
+   ${brTable([EN?'Wave':'ลำดับ',EN?'Segment':'กลุ่ม',EN?'Profile':'ลักษณะ'],ORD.map(o=>[o[0][L],`<b>${o[1][L]}</b>`,o[2][L]]))}
+   <h2><em>04</em>${EN?'Price':'ราคา'}</h2>
+   <p>${EN?'<strong>The price of a staff meal, not a staff salary.</strong> Everything in the previous tabs is in both plans. Nothing is billed on top except extra AI usage.'
+          :'<strong>ราคาเท่าค่าข้าวพนักงาน ไม่ใช่เงินเดือนพนักงาน</strong> ทุกอย่างในแท็บก่อนหน้ารวมอยู่ในทั้งสองแพ็กเกจ ไม่มีการเก็บเพิ่ม ยกเว้นค่า AI ที่ใช้เกิน'}</p>
+   ${brTable([EN?'Plan':'แพ็กเกจ',EN?'Price / month':'ราคาต่อเดือน',EN?'Included':'รวมอะไรบ้าง'],[
+     ['Starter','<b class="n">฿1,999</b>',EN?'~60 documents a month · ฿400 of AI usage included':'ประมาณ 60 เอกสารต่อเดือน · รวมค่า AI ฿400'],
+     ['Pro','<b class="n">฿3,999</b>',EN?'~200 documents a month · ฿800 of AI usage included':'ประมาณ 200 เอกสารต่อเดือน · รวมค่า AI ฿800']])}
+   <h2><em>05</em>${EN?'What they pay today':'วันนี้เขาจ่ายเท่าไหร่'}</h2>
+   <div class="tw"><table><thead><tr><th>${EN?'They pay two people':'วันนี้จ่ายสองคน'}</th><th style="text-align:left">${EN?'Role':'บทบาท'}</th><th>${EN?'Cost':'ค่าใช้จ่าย'}</th></tr></thead><tbody>
+     ${STACK.map((s,i)=>`<tr class="${i%2?'zebra':''}"><td>${s[0][L]}</td><td class="free">${s[1][L]}</td><td class="n">${s[2]}</td></tr>`).join('')}
+     <tr class="total"><td>${EN?'Two invoices, two relationships':'สองใบแจ้งหนี้ สองความสัมพันธ์'}</td><td class="free"></td><td class="n neg">฿62,500–156,000</td></tr>
+   </tbody></table></div>
+   <div class="pull">${EN?'<strong>ThuraGirl: ฿23,988 a year.</strong> Bookkeeper, auditor and registration — one invoice.'
+                        :'<strong>ThuraGirl ฿23,988 ต่อปี</strong> ผู้ทำบัญชี ผู้สอบบัญชี และการจดทะเบียน รวมเป็นใบแจ้งหนี้เดียว'}</div>`;
+
+  return `
+   <h2><em>01</em>${EN?'Personality &amp; voice':'บุคลิกและน้ำเสียง'}</h2>
+   <p>${EN?'<strong>Capable big-sister energy.</strong> Warm, brief, concrete. She says what she did and what she needs from you — nothing else. Money spoken plainly: amounts, dates, one clear next step. Never scolds about a late filing. Celebrates quietly — a single blossom, never confetti. Thai first with customers who prefer it.'
+          :'<strong>พลังแบบพี่สาวที่เก่ง</strong> อบอุ่น สั้น เป็นรูปธรรม เธอบอกว่าทำอะไรไปแล้วและต้องการอะไรจากคุณ ไม่มีมากกว่านั้น พูดเรื่องเงินตรงๆ ทั้งจำนวน วันที่ และขั้นตอนถัดไปหนึ่งข้อ ไม่ตำหนิเรื่องยื่นช้า ดีใจแบบเงียบๆ ด้วยดอกไม้ดอกเดียว ไม่ใช่กระดาษโปรย ขึ้นไทยก่อนกับลูกค้าที่ถนัดไทย'}</p>
+   <div class="quotes">${(EN?['Morning, Chet — I queued up the April VAT (ภ.พ.30). It\u2019s overdue by a day, so let\u2019s lead with that.',
+                              '7 staff, total net ฿312,400. Slips drafted, SSO calculated. Approve and I\u2019ll stage the payments for the 25th.']
+                            :['สวัสดีค่ะ เตรียม ภ.พ.30 ของเดือนเมษายนไว้แล้วนะคะ เลยกำหนดมา 1 วัน เริ่มจากตัวนี้ก่อนดีกว่าค่ะ',
+                              'พนักงาน 7 คน ยอดสุทธิ ฿312,400 ร่างสลิปและคำนวณประกันสังคมแล้ว กดอนุมัติ เดี๋ยวตั้งจ่ายให้วันที่ 25 ค่ะ'])
+        .map(q=>`<div class="q">${q}</div>`).join('')}</div>
+   <p><strong>${EN?'Never.':'ไม่ทำเด็ดขาด'}</strong> ${EN?'Jargon ("reconciliation engine"). Guilt. Exclamation-mark enthusiasm. Promising anything she hasn\u2019t already prepared.'
+          :'ศัพท์เทคนิค การทำให้รู้สึกผิด ความตื่นเต้นแบบใส่อัศเจรีย์ และการรับปากในสิ่งที่ยังไม่ได้เตรียมไว้'}</p>
+   <h2><em>02</em>${EN?'Visual identity':'อัตลักษณ์ทางภาพ'}</h2>
+   ${sw}
+   <p><strong>${EN?'Type.':'ตัวอักษร'}</strong> ${EN?'Manrope for text, DM Sans for numerals, Noto Sans Thai for Thai. Numbers are the hero — a three-tier scale keeps ฿854,200 louder than its label.'
+          :'Manrope สำหรับข้อความ DM Sans สำหรับตัวเลข Noto Sans Thai สำหรับภาษาไทย ตัวเลขคือพระเอก สเกลสามระดับทำให้ ฿854,200 เด่นกว่าคำอธิบายเสมอ'}</p>
+   <p><strong>${EN?'Mascot.':'มาสคอต'}</strong> ${EN?'The gradient girl — teal head-wrap, pink blossom heart. She blinks, floats and reacts in-product; she is the face on every icon, favicon and empty state. Always from the master SVG, never redrawn.'
+          :'เด็กหญิงไล่เฉดสี ผ้าคลุมผมสีเทียล หัวใจดอกไม้สีชมพู เธอกะพริบตา ลอย และตอบสนองในระบบ เป็นหน้าตาแบรนด์ในทุกไอคอน favicon และหน้าว่าง ใช้จาก master SVG เท่านั้น ห้ามวาดใหม่'}</p>
+   <p><strong>${EN?'Surfaces.':'พื้นผิว'}</strong> ${EN?'Paper white, warm cream "comfort", and true dark. Cards with 16px radius and whisper-soft shadows. Lucide icons at 1.8px. Calm, zero clutter.'
+          :'ขาวกระดาษ ครีมอุ่น "comfort" และดำสนิท การ์ดมุมโค้ง 16px เงาบางเบา ไอคอน Lucide เส้น 1.8px สงบ ไม่รก'}</p>
+   <h2><em>03</em>${EN?'Competitive frame':'กรอบการแข่งขัน'}</h2>
+   <p>${EN?'<strong>You don\u2019t operate her. She operates for you.</strong>':'<strong>คุณไม่ต้องใช้เธอ เธอทำงานให้คุณ</strong>'}</p>
+   ${brTable([EN?'Competitor':'คู่แข่ง',EN?'What they are':'เขาคืออะไร',EN?'Our counter':'เราตอบอย่างไร'],[
+     [EN?'Accounting software<br><span style="color:var(--muted);font-size:11.5px">FlowAccount, PEAK, TRCloud</span>':'โปรแกรมบัญชี<br><span style="color:var(--muted);font-size:11.5px">FlowAccount, PEAK, TRCloud</span>',
+      EN?'Tools the owner must learn and operate. Dashboards, ledgers, homework.':'เครื่องมือที่เจ้าของต้องเรียนและใช้เอง dashboard บัญชีแยกประเภท และการบ้าน',
+      EN?'You don\u2019t operate her — she operates for you.':'คุณไม่ต้องใช้เธอ เธอทำงานให้คุณ'],
+     [EN?'Freelance accountants<br><span style="color:var(--muted);font-size:11.5px">the incumbent</span>':'นักบัญชีฟรีแลนซ์<br><span style="color:var(--muted);font-size:11.5px">เจ้าถิ่นเดิม</span>',
+      EN?'Trusted but opaque and slow. Monthly surprises, and no way to see progress.':'ไว้ใจได้แต่ไม่โปร่งใสและช้า มีเรื่องเซอร์ไพรส์ทุกเดือน และมองไม่เห็นความคืบหน้า',
+      EN?'Same trust, always-on, visible the moment it\u2019s prepared.':'ความไว้ใจเท่าเดิม ทำงานตลอดเวลา และเห็นทุกอย่างทันทีที่เตรียมเสร็จ'],
+     [EN?'Doing nothing<br><span style="color:var(--neg);font-size:11.5px">the real competitor</span>':'ไม่ทำอะไรเลย<br><span style="color:var(--neg);font-size:11.5px">คู่แข่งตัวจริง</span>',
+      EN?'Shoebox receipts and hoping. No system, no accountant, no visibility.':'ใบเสร็จกองในกล่องแล้วภาวนา ไม่มีระบบ ไม่มีนักบัญชี มองไม่เห็นอะไรเลย',
+      EN?'She starts working from day one with zero setup knowledge.':'เธอเริ่มทำงานตั้งแต่วันแรก โดยไม่ต้องรู้วิธีตั้งค่าอะไรเลย']])}`;
+}
+function renderBrand(k){
+  curBr=k; setAccent('best');
+  document.getElementById('tabs6').innerHTML=Object.keys(BR).map(j=>
+    `<button class="${j===k?'on':''}" data-t5="${j}"><i></i>${BR[j].n[LANG]}</button>`).join('');
+  const lg=document.getElementById('logic6');
+  if(BR[k].d){lg.style.display='';lg.innerHTML=`<b>${BR[k].n[LANG]}</b> — ${BR[k].d[LANG]}`;}
+  else{lg.style.display='none';lg.innerHTML='';}
+  document.getElementById('doc6').innerHTML=brandHTML(k);
+}
+
+/* ================= 07 marketing plan ================= */
+const MKMON={en:['Oct 26','Nov 26','Dec 26','Jan 27'],th:['ต.ค. 26','พ.ย. 26','ธ.ค. 26','ม.ค. 27']};
+const MKCH=[
+ {en:'Meta — Facebook & Instagram',th:'Meta — Facebook และ Instagram'},
+ {en:'Google Search & YouTube',th:'Google Search และ YouTube'},
+ {en:'TikTok',th:'TikTok'},
+ {en:'LINE OA & LINE Ads',th:'LINE OA และ LINE Ads'},
+ {en:'KOL / influencer',th:'KOL / อินฟลูเอนเซอร์'},
+ {en:'Content production',th:'ผลิตคอนเทนต์'},
+ {en:'PR & partnerships',th:'PR และพันธมิตร'},
+ {en:'Contingency',th:'งบสำรอง'}
+];
+const MKPHASE=[
+ {n:{en:'Tease',th:'ปูทาง'},w:{en:'22 Sep – 4 Oct',th:'22 ก.ย. – 4 ต.ค.'}},
+ {n:{en:'Launch week',th:'สัปดาห์เปิดตัว'},w:{en:'5 – 11 Oct',th:'5 – 11 ต.ค.'}},
+ {n:{en:'Sustain',th:'ประคองแรง'},w:{en:'12 Oct – 15 Nov',th:'12 ต.ค. – 15 พ.ย.'}},
+ {n:{en:'Convert',th:'เร่งปิดการขาย'},w:{en:'16 Nov – 31 Jan',th:'16 พ.ย. – 31 ม.ค.'}}
+];
+const MKKPI=[
+ [{en:'Impressions',th:'Impressions'},{en:'Paid + organic served',th:'จำนวนครั้งที่แสดงผล ทั้งเสียเงินและ organic'}],
+ [{en:'Reach',th:'Reach'},{en:'Unique accounts reached',th:'จำนวนบัญชีที่เข้าถึงแบบไม่ซ้ำ'}],
+ [{en:'Clicks / CTR',th:'คลิก / CTR'},{en:'Traffic to landing and app store',th:'ทราฟฟิกเข้า landing page และ app store'}],
+ [{en:'Cost per click',th:'ต้นทุนต่อคลิก'},{en:'Blended across channels',th:'เฉลี่ยรวมทุกช่องทาง'}],
+ [{en:'Sign-ups (trial)',th:'สมัครใช้งาน (ทดลอง)'},{en:'Accounts created',th:'จำนวนบัญชีที่สร้าง'}],
+ [{en:'Trial → paid',th:'ทดลอง → จ่ายเงิน'},{en:'Conversion within 30 days',th:'อัตราแปลงภายใน 30 วัน'}],
+ [{en:'Paying customers',th:'ลูกค้าที่จ่ายเงิน'},{en:'Cumulative at month end — target from the model',th:'สะสม ณ สิ้นเดือน เป้ามาจากโมเดล'}],
+ [{en:'Customer acquisition cost',th:'ต้นทุนได้ลูกค้าใหม่'},{en:'Spend ÷ new paying customers',th:'งบที่ใช้ ÷ ลูกค้าจ่ายเงินรายใหม่'}],
+ [{en:'Payback period',th:'ระยะคืนทุน'},{en:'Months to recover acquisition cost',th:'จำนวนเดือนที่คืนต้นทุนการได้ลูกค้า'}]
+];
+function mktBudget(){
+  const head=`<tr><th>${t('thChannel')}</th>${MKMON[LANG].map(m=>`<th>${m}</th>`).join('')}<th class="tot">${t('thTotal')}</th><th>${t('thShare')}</th></tr>`;
+  const rows=MKCH.map((c,i)=>`<tr class="${i%2?'zebra':''} ph"><td style="color:var(--ink2)">${c[LANG]}</td>`
+    +MKMON[LANG].map(()=>`<td class="n">—</td>`).join('')+`<td class="n tot">—</td><td class="n">—</td></tr>`).join('');
+  const tot=`<tr class="total"><td>${t('thTotal')}</td>${MKMON[LANG].map(()=>`<td class="n">—</td>`).join('')}<td class="n tot">฿1.5M</td><td class="n">100%</td></tr>`;
+  const model=`<div class="tw" style="margin-top:18px"><table><thead><tr><th>${t('mediaSpend')} · ${t('mm')}</th>${MKMON[LANG].map(m=>`<th>${m}</th>`).join('')}</tr></thead><tbody>
+    <tr><td>${t('bestC')}</td>${[0,1,2,3].map(i=>`<td class="n">${f1(D.best.m.mkt[i])}</td>`).join('')}</tr>
+    <tr class="zebra"><td>${t('baseC')}</td>${[0,1,2,3].map(i=>`<td class="n">${f1(D.base.m.mkt[i])}</td>`).join('')}</tr>
+    </tbody></table></div>`;
+  return `<div class="card"><h3>${t('mkT1')}</h3><div class="cap">${t('mkD1')}</div>
+    <div class="tw"><table class="mth"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table></div>
+    <div class="tmpl"><h4>${t('thNote')}</h4><p>${t('budgetNote')}</p></div>
+    ${model}<div class="foot">${t('mtCap')}</div></div>`;
+}
+function mktContent(){
+  const head=`<tr><th>${t('thPhase')}</th><th style="text-align:left">${t('thWeek')}</th><th style="text-align:left">${t('thChannel')}</th>
+    <th style="text-align:left">${t('thTheme')}</th><th style="text-align:left">${t('thFormat')}</th>
+    <th style="text-align:left">${t('thOwner')}</th><th style="text-align:left">${t('thStatus')}</th></tr>`;
+  const body=MKPHASE.map(p=>`<tr class="head"><td>${p.n[LANG]}</td><td class="free n">${p.w[LANG]}</td><td colspan="5"></td></tr>`
+    +[0,1].map(()=>`<tr class="ph"><td style="padding-left:16px">—</td><td class="free">—</td><td class="free">—</td><td class="free">—</td><td class="free">—</td><td class="free">—</td><td class="free">${t('tbd')}</td></tr>`).join('')).join('');
+  return `<div class="card"><h3>${t('mkT2')}</h3><div class="cap">${t('mkD2')}</div>
+    <div class="tw"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
+    <div class="tmpl"><h4>${t('thPhase')}</h4><p>${t('contentNote')}</p></div></div>`;
+}
+function mktKpi(){
+  const tgt=`<div class="tw"><table><thead><tr><th>${t('modelTarget')}</th>${MKMON[LANG].map(m=>`<th>${m}</th>`).join('')}</tr></thead><tbody>
+    <tr><td>${t('bestC')}</td>${[0,1,2,3].map(i=>`<td class="n">${f0(D.best.m.cust[i])}</td>`).join('')}</tr>
+    <tr class="zebra"><td>${t('baseC')}</td>${[0,1,2,3].map(i=>`<td class="n">${f0(D.base.m.cust[i])}</td>`).join('')}</tr>
+    <tr class="ph"><td>${t('thActual')}</td>${[0,1,2,3].map(()=>`<td class="n">—</td>`).join('')}</tr>
+    </tbody></table></div>`;
+  const kpi=`<div class="tw" style="margin-top:20px"><table><thead><tr><th>${t('thKpi')}</th>
+    <th style="text-align:left">${t('thDef')}</th><th>${t('thTarget')}</th><th>${t('thActual')}</th><th>${t('thVar')}</th></tr></thead><tbody>`
+    +MKKPI.map((k,i)=>`<tr class="${i%2?'zebra':''}"><td>${k[0][LANG]}</td><td class="free" style="color:var(--muted)">${k[1][LANG]}</td>
+      <td class="n ph">—</td><td class="n ph">—</td><td class="n ph">—</td></tr>`).join('')+'</tbody></table></div>';
+  return `<div class="card"><h3>${t('mkT3')}</h3><div class="cap">${t('mkD3')}</div>${tgt}${kpi}
+    <div class="tmpl"><h4>${t('thKpi')}</h4><p>${t('kpiNote')}</p></div></div>`;
+}
+const ABC=[['M1',157],['M2',346],['M3',565],['M4',821],['M5',1113],['M6',1440]];
+const ABMSG={en:['\u201cAre your books ready this month?\u201d','\u201cLet ThuraGirl close it for you\u201d','\u201cRegister your company free\u201d'],
+             th:['\u201cเดือนนี้บัญชีพร้อมหรือยัง\u201d','\u201cให้ ThuraGirl ปิดให้'+'\u201d','\u201cจดทะเบียนบริษัทฟรี\u201d']};
+function mktBrief(){
+  const EN=LANG==='en', mx=1440;
+  const kpi=`<div class="kpis">
+    <div class="kpi"><div class="k">${t('abBudget')}</div><div class="v">฿1.5M</div><div class="u">${t('abBudgetU')}</div></div>
+    <div class="kpi"><div class="k">${t('abWindow')}</div><div class="v">4–6 ${t('uMo')}</div><div class="u">${t('abWindowU')}</div></div>
+    <div class="kpi"><div class="k">${t('abCust')}</div><div class="v pos">850–1,000</div><div class="u">${t('abCustU')}</div></div>
+    <div class="kpi"><div class="k">${t('abCpa')}</div><div class="v">฿1,500–1,750</div><div class="u">${t('abCpaU')}</div></div>
+  </div>`;
+  const back=[[t('abBack1T'),t('abBack1')],[t('abBack2T'),t('abBack2')],[t('abBack3T'),t('abBack3')]];
+  const curve=ABC.map(c=>`<div class="mrow"><span class="m">${c[0]}</span>
+      <span class="bar"><b style="left:0;width:${(c[1]/mx*100).toFixed(1)}%;background:var(--sc)"></b></span>
+      <span class="net">${c[0]==='M4'?(EN?'budget ends':'งบหมด'):''}</span>
+      <span class="bal">${f0(c[1])}</span></div>`).join('');
+  return `<div class="card"><h3>${t('mkT0')}</h3><div class="cap">${t('mkD0')}</div>
+    <div class="pull" style="font-size:15px">${t('abHead')}</div>
+    ${kpi}
+    <h3 style="margin-top:6px">${t('abBack')}</h3>
+    <div class="tw"><table><thead><tr><th>${t('abDeliv')}</th><th style="text-align:left">${t('thDef')}</th></tr></thead><tbody>
+      ${back.map((b,i)=>`<tr class="${i%2?'zebra':''}"><td>${b[0]}</td><td class="free">${b[1]}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="tmpl" style="margin-top:20px"><h4>${t('abCurve')}</h4><p style="margin-bottom:10px">${t('abCurveCap')}</p>
+      <div class="mhead"><span></span><span></span><span></span><span>${t('abCust')}</span></div>${curve}</div>
+    <div class="tmpl"><h4>${t('abMsg')}</h4><p style="margin-bottom:8px">${t('abMsgCap')}</p>
+      <div class="quotes">${ABMSG[LANG].map(m=>`<div class="q">${m}</div>`).join('')}</div></div>
+    <div class="foot">${t('abFoot')}</div></div>`;
+}
+function renderMkt(k){
+  curMkt=k; setAccent('best');
+  const tabs={b0:t('mkT0'),b1:t('mkT1'),b2:t('mkT2'),b3:t('mkT3')};
+  document.getElementById('tabs7').innerHTML=Object.keys(tabs).map(j=>
+    `<button class="${j===k?'on':''}" data-t4="${j}"><i></i>${tabs[j]}</button>`).join('');
+  document.getElementById('await7').innerHTML=t('mkAwait');
+  document.getElementById('mkt7').innerHTML= k==='b0'?mktBrief():k==='b1'?mktBudget():k==='b2'?mktContent():mktKpi();
+}
+
+/* ================= language ================= */
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-t]').forEach(el=>{el.innerHTML=t(el.dataset.t)});
+  document.getElementById('doc1').innerHTML=docHTML();
+  buildTabs('tabs2',null,curPL); buildTabs('tabs3',null,curCF);
+  renderPL(curPL); renderCmp2();
+  renderCF(curCF,true); renderCmp3();
+  renderTL(curTL); renderP(curP); renderBrand(curBr); renderMkt(curMkt);
+  const active=document.querySelector('#nav button.on').dataset.p;
+  setAccent(active==='p2'?curPL:active==='p3'?curCF:'best');
+}
+document.getElementById('lang').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b||b.dataset.l===LANG)return;
+  [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on'); LANG=b.dataset.l; applyLang();
+});
+
+/* ================= events ================= */
+document.getElementById('tabs2').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on'); renderPL(b.dataset.s);
+});
+document.getElementById('tabs3').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on'); renderCF(b.dataset.s);
+});
+document.getElementById('tabs4').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return; renderTL(b.dataset.t2);
+});
+document.getElementById('tabs5').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return; renderP(b.dataset.t3);
+});
+document.getElementById('tabs6').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return; renderBrand(b.dataset.t5);
+});
+document.getElementById('tabs7').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return; renderMkt(b.dataset.t4);
+});
+document.getElementById('slider').addEventListener('input',update);
+document.getElementById('presets').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  document.getElementById('slider').value=b.dataset.v; update();
+});
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(b.dataset.p).classList.add('on');
+  window.scrollTo({top:0});
+  setAccent(b.dataset.p==='p2'?curPL:b.dataset.p==='p3'?curCF:'best');
+});
+
+applyLang();
+</script>
+</body>
+</html>
