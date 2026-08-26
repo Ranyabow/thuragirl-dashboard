@@ -551,8 +551,8 @@ const T = {
 
  eb2:{en:'02 — Profit & Loss',th:'02 — งบกำไรขาดทุน'},
  h1_2:{en:'P&L to EBITDA',th:'งบกำไรขาดทุนถึงระดับ EBITDA'},
- sub2:{en:'All four scenarios share the same cost structure. They differ in Year 1 sales achievement and whether fixed costs were cut.',
-       th:'ทั้ง 4 scenario ใช้โครงสร้างต้นทุนเดียวกัน ต่างกันที่ระดับความสำเร็จของยอดขายปีแรก และการปรับลดต้นทุนคงที่'},
+ sub2:{en:'All three scenarios share the same cost structure. They differ only in how much of the Year 1 sales plan is achieved.',
+       th:'ทั้ง 3 scenario ใช้โครงสร้างต้นทุนเดียวกัน ต่างกันแค่ระดับความสำเร็จของยอดขายในปีแรก'},
  plTitle:{en:'Income statement',th:'งบกำไรขาดทุน'},
  plCap:{en:'฿ millions · Year 1 = Oct 2026 – Sep 2027',th:'฿ ล้าน · ปีที่ 1 = ต.ค. 2026 – ก.ย. 2027'},
  cmpTitle:{en:'EBITDA across scenarios',th:'EBITDA เทียบทุก scenario'},
@@ -866,21 +866,18 @@ const t = k => (T[k] ? T[k][LANG] : k);
 const SC = {
   best:{color:'#0E6E63', ach:'100%',
     name:{en:'Best case',th:'Best Case'},
-    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
     desc:{en:'Sales land fully on plan, using the conversion rates calculated per channel. This is the base every other scenario scales from.',
           th:'ยอดขายเป็นไปตามแผนเต็ม 100% ตามอัตราแปลงที่คำนวณไว้รายช่องทาง เป็นฐานที่ scenario อื่นอ้างอิง'},
     fx:"'1.1'!H3 = 'Traffic'!H3"},
   base:{color:'#1D4F91', ach:'55%',
     name:{en:'Base case',th:'Base Case'},
-    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
-    desc:{en:'Sales reach 55% of plan with no additional cost cuts. Costs set as a percentage of revenue fall on their own; fixed amounts stay put.',
-          th:'ยอดขายทำได้ 55% ของแผน โดยไม่มีการสั่งลดต้นทุนเพิ่มเติม รายการที่ตั้งเป็น % ของยอดขายปรับลดเองตามกลไก ส่วนที่ตั้งเป็นก้อนยังคงเดิม'},
+    desc:{en:'Sales reach 55% of plan. Costs set as a percentage of revenue fall on their own; fixed amounts stay put.',
+          th:'ยอดขายทำได้ 55% ของแผน รายการที่ตั้งเป็น % ของยอดขายปรับลดเองตามกลไก ส่วนที่ตั้งเป็นก้อนยังคงเดิม'},
     fx:"'1.1'!H3 = 0.55 × 'Traffic'!H3"},
   worst:{color:'#A33B12', ach:'10%',
     name:{en:'Worst case',th:'Worst Case'},
-    tag:{en:'no additional cost cuts',th:'ไม่ปรับลดต้นทุนคงที่'},
-    desc:{en:'Sales reach only 10% of plan with no additional cost cuts. Tests how much shock the cost structure absorbs.',
-          th:'ยอดขายทำได้เพียง 10% ของแผน โดยไม่มีการสั่งลดต้นทุนเพิ่มเติม ใช้ทดสอบว่าโครงสร้างต้นทุนรับแรงกระแทกได้แค่ไหน'},
+    desc:{en:'Sales reach only 10% of plan. Tests how much shock the cost structure absorbs before anything is cut.',
+          th:'ยอดขายทำได้เพียง 10% ของแผน ใช้ทดสอบว่าโครงสร้างต้นทุนรับแรงกระแทกได้แค่ไหนก่อนที่จะต้องลดอะไร'},
     fx:"'1.1'!H3 = 0.10 × 'Traffic'!H3"}
 };
 const ORDER=['best','base','worst'];
@@ -1060,7 +1057,7 @@ document.addEventListener('click',e=>{
 function renderPL(k){
   curPL=k; setAccent(k); const d=D[k],s=SC[k];
   document.getElementById('logic2').innerHTML=
-    `<b>${s.name[LANG]}</b> — ${ofPlan(k)} · ${s.tag[LANG]}<br>${s.desc[LANG]}`;
+    `<b>${s.name[LANG]}</b> — ${ofPlan(k)}<br>${s.desc[LANG]}`;
   const L=6,bep=d.ebitda.findIndex(v=>v>0);
   document.getElementById('kpi2').innerHTML=[
     [t('kCustY7'),f0(d.cust[L]),'',''],
@@ -1162,7 +1159,7 @@ function monthly(b,cap){
 function renderCF(k,keep){
   curCF=k; setAccent(k); const s=SC[k];
   document.getElementById('logic3').innerHTML=
-    `<b>${s.name[LANG]}</b> — ${ofPlan(k)} · ${s.tag[LANG]}<br>${s.desc[LANG]}`;
+    `<b>${s.name[LANG]}</b> — ${ofPlan(k)}<br>${s.desc[LANG]}`;
   const need=roundUp(minCap(k),250000), buf=Math.min(20000000,roundUp(minCapBuf(k),250000));
   document.getElementById('presets').innerHTML=
     `<button data-v="${CAP0}">${t('pReset')}</button>
