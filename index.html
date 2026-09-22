@@ -314,6 +314,9 @@ button.nx{background:none;border:1px solid var(--line);border-radius:2px;color:v
  padding:0;margin-right:7px;cursor:pointer;vertical-align:1px;flex:none}
 button.nx:hover{border-color:var(--sc);color:var(--sc)}
 button.nx.on{background:var(--sc);border-color:var(--sc);color:#fff}
+table.tpl th,table.tpl td{text-align:left}
+table.tpl td.ph{color:var(--muted)}
+#tp9 details .body p.cap{margin:4px 0 10px;max-width:none}
 button.nx:focus:not(:focus-visible){outline:none}
 button.nx:focus-visible{outline:1px solid var(--sc);outline-offset:2px}
 .tmpl{border:1px dashed var(--line);border-radius:var(--r);background:#FBFCFD;padding:14px 17px;margin-top:14px}
@@ -521,6 +524,13 @@ tr.ph td{color:#AFB9C4}
     </div>
     <div class="kpis" id="kpi9"></div>
     <div id="ms9"></div>
+    <div class="card" id="tp9">
+      <h3 data-t="tpTitle"></h3>
+      <div class="cap" data-t="tpCap"></div>
+      <details id="tpDF"><summary data-t="tpDF"></summary><div class="body" id="tpDFb"></div></details>
+      <details id="tpInc"><summary data-t="tpInc"></summary><div class="body" id="tpIncb"></div></details>
+      <details id="tpEv"><summary data-t="tpEv"></summary><div class="body" id="tpEvb"></div></details>
+    </div>
   </section>
 
   </main>
@@ -543,8 +553,8 @@ const T = {
  nav7:{en:'Marketing Plan',th:'แผนการตลาด'},
  nav8:{en:'User Tracker',th:'User Tracker'},
  nav9:{en:'Milestone Tracker',th:'Milestone Tracker'},
- railfoot:{en:'Ai SME — Thuragirl<br>7-year projection<br>Phase 1 complete 16 Oct 2026<br>Updated 15 Sep 2026',
-           th:'Ai SME — Thuragirl<br>ประมาณการ 7 ปี<br>ปิดงานเฟส 1 วันที่ 16 ต.ค. 2026<br>อัปเดต 15 ก.ย. 2026'},
+ railfoot:{en:'Ai SME — Thuragirl<br>7-year projection<br>Phase 1 complete 16 Oct 2026<br>Updated 21 Sep 2026',
+           th:'Ai SME — Thuragirl<br>ประมาณการ 7 ปี<br>ปิดงานเฟส 1 วันที่ 16 ต.ค. 2026<br>อัปเดต 21 ก.ย. 2026'},
 
  eb1:{en:'01 — Assumptions',th:'01 — สมมติฐาน'},
  h1_1:{en:'How this projection was built',th:'โมเดลนี้สร้างมาอย่างไร'},
@@ -860,14 +870,44 @@ const T = {
  /* ---- 09 milestone tracker ---- */
  eb9:{en:'09 — Milestones',th:'09 — Milestone'},
  h1_9:{en:'Milestone Tracker',th:'Milestone Tracker'},
- sub9:{en:'Dev Founder equity gates for ThuraGirl — five tranches over four years from MVP. Each tranche releases 2.4%; three of four criteria must pass, except the final tranche where both must pass. Sales gates are 90% of the best case in the projection, counted on paying accounts or revenue, whichever arrives first.',
-       th:'เงื่อนไขปลดหุ้น Dev Founder ของ ThuraGirl — 5 tranche ตลอด 4 ปีนับจาก MVP แต่ละ tranche ปลด 2.4% ต้องผ่าน 3 จาก 4 ข้อ ยกเว้น tranche สุดท้ายที่ต้องผ่านทั้ง 2 ข้อ เกณฑ์ยอดขายตั้งไว้ที่ 90% ของ best case ในประมาณการ นับจากบัญชีที่จ่ายเงินหรือรายได้ อย่างใดถึงก่อน'},
+ sub9:{en:'Dev Founder equity gates for ThuraGirl — five tranches over four years from MVP. Each tranche releases 2.4%; three of four criteria must pass, except the final tranche where both must pass. Sales gates are 90% of plan, counted on paying accounts or revenue, whichever arrives first.',
+       th:'เงื่อนไขปลดหุ้น Dev Founder ของ ThuraGirl — 5 tranche ตลอด 4 ปีนับจาก MVP แต่ละ tranche ปลด 2.4% ต้องผ่าน 3 จาก 4 ข้อ ยกเว้น tranche สุดท้ายที่ต้องผ่านทั้ง 2 ข้อ เกณฑ์ยอดขายตั้งไว้ที่ 90% ของแผน นับจากบัญชีที่จ่ายเงินหรือรายได้ อย่างใดถึงก่อน'},
  msType:{en:'Area',th:'ด้าน'},
  msCrit:{en:'Criteria',th:'เกณฑ์'},
  msTgt:{en:'Measurable target',th:'เป้าที่วัดได้'},
  msStatus:{en:'Actual performance status',th:'สถานะผลจริงเทียบเป้า'},
  msVerify:{en:'Verified by',th:'ผู้ตรวจรับ'},
  msNoteShow:{en:'Show the carve-out',th:'ดูข้อยกเว้น'},
+ tpTitle:{en:'Tracking templates',th:'เทมเพลตสำหรับเก็บหลักฐาน'},
+ tpCap:{en:'Evidence no system records on its own. Uptime, sales and churn come straight out of the monitoring and billing systems, so they have no template here.',
+        th:'หลักฐานที่ไม่มีระบบไหนบันทึกให้ ส่วน uptime ยอดขาย และ churn ดึงจากระบบ monitoring และ billing ได้โดยตรง จึงไม่มีเทมเพลตในส่วนนี้'},
+ tpDF:{en:'Dev Founder delivery &amp; attendance log — monthly',th:'บันทึกการทำงานและการเข้าประชุมของ Dev Founder — รายเดือน'},
+ tpDFcap:{en:'Evidence for “Dev Founder present and active” (T2, T3) and “good standing” (T5). One log per tranche year; months count from the MVP date. Each ratio reads done / planned — meetings attended / scheduled, sprint items delivered / planned, issues answered on time / raised.',
+          th:'หลักฐานสำหรับเกณฑ์ “Dev Founder present และ active” (T2, T3) และ “good standing” (T5) ทำ 1 ชุดต่อปีของแต่ละ tranche นับเดือนจากวัน MVP ช่องที่เป็นสัดส่วนอ่านว่า ทำได้ / ตามแผน — ประชุมที่เข้า / ที่นัด งาน sprint ที่ส่ง / ที่วางแผน ปัญหาที่ตอบทัน / ที่ถูกแจ้ง'},
+ tpInc:{en:'Incident log',th:'บันทึก incident'},
+ tpIncCap:{en:'Every time the system has a problem. T4 needs at least one incident the team fixed without the Dev Founder — start logging from Year 1 or there will be nothing to show. Also explains any uptime dip in T2–T4.',
+           th:'จดทุกครั้งที่ระบบมีปัญหา เกณฑ์ T4 ต้องมี incident อย่างน้อย 1 ครั้งที่ทีมแก้เองโดยไม่ต้องให้ Dev Founder เข้ามา ถ้าไม่เริ่มจดตั้งแต่ปีที่ 1 จะไม่มีอะไรให้โชว์ และใช้อธิบายตอน uptime ตกใน T2–T4 ได้ด้วย'},
+ tpEv:{en:'Evidence register — one row per criterion',th:'ทะเบียนหลักฐาน — 1 แถวต่อ 1 เกณฑ์'},
+ tpEvCap:{en:'What the Board needs on the table to certify each tranche within 30 days of its window closing. MVP certification also releases XYZ’s second ฿5M subscription under the SHA.',
+          th:'สิ่งที่บอร์ดต้องใช้ในการรับรองแต่ละ tranche ภายใน 30 วันหลังจบรอบ ทั้งนี้การรับรอง MVP ยังผูกกับเงินเพิ่มทุนก้อนที่สองของ XYZ ฿5M ตาม SHA ด้วย'},
+ tpMonth:{en:'Month',th:'เดือน'},
+ tpMeet:{en:'Meetings',th:'ประชุม'},
+ tpSprint:{en:'Sprint items',th:'งาน sprint'},
+ tpIssue:{en:'Issues on time',th:'ปัญหาที่ตอบทัน'},
+ tpAbsent:{en:'Unannounced absence',th:'หายไปโดยไม่แจ้ง'},
+ tpNote:{en:'Board note',th:'หมายเหตุบอร์ด'},
+ tpHash:{en:'#',th:'#'},
+ tpDate:{en:'Date',th:'วันที่'},
+ tpWhat:{en:'What happened',th:'เกิดอะไรขึ้น'},
+ tpDown:{en:'Downtime',th:'ระยะเวลาที่ล่ม'},
+ tpFixed:{en:'Fixed by',th:'ใครแก้'},
+ tpDFneed:{en:'Dev Founder needed?',th:'ต้องให้ DF ช่วยไหม'},
+ tpRunbook:{en:'Runbook step used',th:'ใช้ขั้นตอนไหนใน runbook'},
+ tpCrit:{en:'Criterion',th:'เกณฑ์'},
+ tpEvid:{en:'Evidence to file',th:'หลักฐานที่ต้องเก็บ'},
+ tpFile:{en:'File link',th:'ลิงก์ไฟล์'},
+ tpColl:{en:'Collected',th:'วันที่เก็บ'},
+ tpRes:{en:'Board resolution',th:'มติบอร์ด'},
  msNoteHide:{en:'Hide the carve-out',th:'ซ่อนข้อยกเว้น'},
  msRule34:{en:'Pass 3 of 4',th:'ผ่าน 3 จาก 4'},
  msRule22:{en:'Pass both (AND)',th:'ต้องผ่านทั้ง 2 ข้อ'},
@@ -1940,6 +1980,57 @@ document.addEventListener('click',e=>{
   if(r) r.classList.toggle('on',on);
 });
 
+/* ================= 09 tracking templates ================= */
+/* Evidence each criterion needs, in MS[].r order (18 rows). Condensed from the
+   sheet's "Verified by" and "หมายเหตุ / TBD" columns. */
+const EVID={
+ T1:[['Walkthrough of the full flow on production','walkthrough เต็ม flow บน production'],
+     ['QA report — 7 features + a correct close','QA report — ครบ 7 features + ปิดบัญชีถูกต้อง'],
+     ['Bilingual QA review, outside the dev team','QA review สองภาษา โดยคนนอกทีม Dev'],
+     ['Analytics export at day 30 + payment-gateway records','export จาก analytics ณ วันที่ 30 + หลักฐานจาก payment gateway']],
+ T2:[['Monitoring tool, 12-month uptime report','รายงาน uptime 12 เดือนจากเครื่องมือ monitoring'],
+     ['Dev Founder log, 12 months (template above)','บันทึก Dev Founder 12 เดือน (เทมเพลตด้านบน)'],
+     ['System data + actual P&amp;L','ข้อมูลในระบบ + P&amp;L จริง'],
+     ['Production proof: more than one bank reconciling + API live','หลักฐานบน production: reconcile ได้มากกว่า 1 ธนาคาร + API ใช้งานจริง']],
+ T3:[['Monitoring tool, 12-month uptime report','รายงาน uptime 12 เดือนจากเครื่องมือ monitoring'],
+     ['Dev Founder log, 12 months','บันทึก Dev Founder 12 เดือน'],
+     ['System data + actual P&amp;L','ข้อมูลในระบบ + P&amp;L จริง'],
+     ['Code-review report, PDPA certificate, pen-test report','รายงาน code review, ใบรับรอง PDPA, รายงาน pen test']],
+ T4:[['Monitoring tool, 12-month uptime report','รายงาน uptime 12 เดือนจากเครื่องมือ monitoring'],
+     ['Runbook + an incident fixed without the Dev Founder (incident log)','Runbook + incident ที่ทีมแก้เองโดยไม่มี DF (จาก incident log)'],
+     ['Target not set yet','ยังไม่กำหนดเป้า'],
+     ['Feature-attribution report — method not set yet','รายงาน feature attribution — ยังไม่กำหนดวิธีนับ']],
+ T5:[['Billing export, confirmed by finance or the auditor','export จาก billing ยืนยันโดยฝ่ายบัญชีหรือผู้สอบบัญชี'],
+     ['Dev Founder log + no uncured material breach','บันทึก Dev Founder + ไม่มี material breach ที่ยังไม่แก้']]
+};
+function renderTP(){
+  const i=LANG==='en'?0:1, ph='<td class="n ph">—</td>';
+  const tbl=(cols,body)=>`<div class="tw"><table class="tpl"><thead><tr>${cols.map(c=>
+    `<th>${t(c)}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;
+
+  // 1. Dev Founder log — 12 months from MVP
+  const dfRows=Array.from({length:12},(_,m)=>`<tr class="${m%2?'zebra':''}">
+    <td>${LANG==='en'?'Month '+(m+1):'เดือนที่ '+(m+1)}</td>
+    <td class="n ph">— / —</td><td class="n ph">— / —</td><td class="n ph">— / —</td>${ph}${ph}</tr>`).join('');
+  document.getElementById('tpDFb').innerHTML=`<p class="cap">${t('tpDFcap')}</p>`
+    +tbl(['tpMonth','tpMeet','tpSprint','tpIssue','tpAbsent','tpNote'],dfRows);
+
+  // 2. Incident log — blank rows to fill
+  const incRows=Array.from({length:5},(_,n)=>`<tr class="${n%2?'zebra':''}">
+    <td>${n+1}</td>${ph}${ph}${ph}${ph}${ph}${ph}</tr>`).join('');
+  document.getElementById('tpIncb').innerHTML=`<p class="cap">${t('tpIncCap')}</p>`
+    +tbl(['tpHash','tpDate','tpWhat','tpDown','tpFixed','tpDFneed','tpRunbook'],incRows);
+
+  // 3. Evidence register — prefilled from MS + EVID
+  let z=0;
+  const evRows=MS.map(m=>m.r.map((r,n)=>`<tr class="${(z++)%2?'zebra':''}">
+    <td>${m.id} · ${n+1}</td><td>${r[0]}</td>
+    <td class="free" style="color:var(--ink2)">${r[3+i]}</td>
+    <td class="free">${EVID[m.id][n][i]}</td>${ph}${ph}${ph}</tr>`).join('')).join('');
+  document.getElementById('tpEvb').innerHTML=`<p class="cap">${t('tpEvCap')}</p>`
+    +tbl(['tpCrit','msType','msTgt','tpEvid','tpFile','tpColl','tpRes'],evRows);
+}
+
 /* ================= 09 milestone tracker ================= */
 /* Transcribed from TG & NICHE Master Timeline, tab "Updated DF_TT". */
 const MS=[
@@ -1963,8 +2054,7 @@ const MS=[
       'Board, from analytics','บอร์ด จาก product analytics']]},
  {id:'T2', eq:0.024, rule:'msRule34',
   n:{en:'Tranche 2 — Year 1 from MVP',th:'Tranche 2 — ปีที่ 1 นับจาก MVP'},
-  w:{en:'Within 12 months of MVP · plan for the year: 4,286 paying accounts or ฿53.7M revenue',
-     th:'ภายใน 12 เดือนหลัง MVP · แผนของปีนี้ 4,286 บัญชีที่จ่ายเงิน หรือรายได้ ฿53.7M'},
+  w:{en:'Within 12 months of MVP',th:'ภายใน 12 เดือนหลัง MVP'},
   r:[['Product','App up at least 99.0% of the year',
       'แอปทำงานได้อย่างน้อย 99.0% ของเวลาทั้งปี',
       '≥99.0% uptime','uptime ≥99.0%','Third-party monitoring','เครื่องมือวัดภายนอก'],
@@ -1974,7 +2064,7 @@ const MS=[
       'Board','บอร์ด'],
      ['Sales','Reach 90% of the Year 1 plan — accounts or revenue, whichever gets there first',
       'ทำได้ 90% ของแผนปีที่ 1 — นับบัญชีหรือรายได้ อย่างใดถึงก่อน',
-      '≥3,858 paying accounts or ≥฿48.3M revenue','≥3,858 บัญชีที่จ่ายเงิน หรือรายได้ ≥฿48.3M',
+      '≥90% of plan','≥90% ของแผน',
       'System data + actual P&L','ข้อมูลในระบบ + P&L จริง'],
      ['Product','Bank reconciliation running on more than one bank, plus an ERP or agency API',
       'Bank reconciliation ใช้งานได้มากกว่า 1 ธนาคาร และเชื่อม API กับ ERP หรือหน่วยงานที่เกี่ยวข้อง',
@@ -1982,8 +2072,7 @@ const MS=[
       'Board · bank and API partner TBD','บอร์ด · ธนาคารและ API partner ยังไม่สรุป']]},
  {id:'T3', eq:0.024, rule:'msRule34',
   n:{en:'Tranche 3 — Year 2 from MVP',th:'Tranche 3 — ปีที่ 2 นับจาก MVP'},
-  w:{en:'Within 12 months of Year 1 · plan for the year: 12,478 paying accounts or ฿239.9M revenue',
-     th:'ภายใน 12 เดือนหลังปีที่ 1 · แผนของปีนี้ 12,478 บัญชีที่จ่ายเงิน หรือรายได้ ฿239.9M'},
+  w:{en:'Within 12 months of Year 1',th:'ภายใน 12 เดือนหลังปีที่ 1'},
   r:[['Product','App up at least 99.5% of the year',
       'แอปทำงานได้อย่างน้อย 99.5% ของเวลาทั้งปี',
       '≥99.5% uptime','uptime ≥99.5%','Third-party monitoring','เครื่องมือวัดภายนอก'],
@@ -1993,7 +2082,7 @@ const MS=[
       'Board','บอร์ด'],
      ['Sales','Reach 90% of the Year 2 plan — accounts or revenue, whichever gets there first',
       'ทำได้ 90% ของแผนปีที่ 2 — นับบัญชีหรือรายได้ อย่างใดถึงก่อน',
-      '≥11,231 paying accounts or ≥฿215.9M revenue','≥11,231 บัญชีที่จ่ายเงิน หรือรายได้ ≥฿215.9M',
+      '≥90% of plan','≥90% ของแผน',
       'System data + actual P&L','ข้อมูลในระบบ + P&L จริง'],
      ['Product','Codebase passes an outside review',
       'Codebase ผ่านการตรวจจากภายนอก',
@@ -2060,6 +2149,7 @@ function renderMS(){
         <th>${t('msStatus')}</th>
         <th style="text-align:left">${t('msVerify')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   };
+  renderTP();
   document.getElementById('ms9').innerHTML=
     `<div class="card">${MS.map(gate).join('')}
       </div>`;
